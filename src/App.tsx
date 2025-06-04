@@ -8,6 +8,8 @@ import Index from "./pages/Index";
 import CulturalTraining from "./pages/CulturalTraining";
 import BuddySystem from "./pages/BuddySystem";
 import InformationBoard from "./pages/InformationBoard";
+import Login from "./pages/Login";
+import EventsAndPlaces from "./pages/EventsAndPlaces";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +25,8 @@ const App = () => (
           <Route path="/cultural-training" element={<CulturalTraining />} />
           <Route path="/buddy-system" element={<BuddySystem />} />
           <Route path="/information-board" element={<InformationBoard />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/events-places" element={<EventsAndPlaces />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

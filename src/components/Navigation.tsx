@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Home, BookOpen, Users, Info, Menu } from "lucide-react";
+import { Home, BookOpen, Users, Info, Menu, LogIn, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -11,6 +11,7 @@ const Navigation = () => {
     { to: "/", label: "Home", icon: Home },
     { to: "/cultural-training", label: "Cultural Training", icon: BookOpen },
     { to: "/buddy-system", label: "Buddy System", icon: Users },
+    { to: "/events-places", label: "Events & Places", icon: Calendar },
     { to: "/information-board", label: "Information Board", icon: Info },
   ];
 
@@ -40,6 +41,12 @@ const Navigation = () => {
             {navItems.map((item) => (
               <NavLink key={item.to} {...item} />
             ))}
+            <Button asChild variant="outline" size="sm" className="ml-4">
+              <Link to="/login">
+                <LogIn size={16} className="mr-2" />
+                Login
+              </Link>
+            </Button>
           </div>
 
           {/* Mobile Navigation */}
@@ -54,6 +61,13 @@ const Navigation = () => {
                 {navItems.map((item) => (
                   <NavLink key={item.to} {...item} mobile />
                 ))}
+                <Link
+                  to="/login"
+                  className="flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 hover:bg-accent w-full mt-4 border border-input"
+                >
+                  <LogIn size={20} />
+                  <span>Login</span>
+                </Link>
               </div>
             </SheetContent>
           </Sheet>

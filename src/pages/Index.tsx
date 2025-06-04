@@ -2,7 +2,7 @@
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Heart, Globe, Users } from "lucide-react";
+import { ArrowRight, Heart, Globe, Users, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Index = () => {

@@ -9,7 +9,153 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      buddy: {
+        Row: {
+          buddy_id: string | null
+          connected_at: string | null
+          id: number
+          user_id: string | null
+        }
+        Insert: {
+          buddy_id?: string | null
+          connected_at?: string | null
+          id: number
+          user_id?: string | null
+        }
+        Update: {
+          buddy_id?: string | null
+          connected_at?: string | null
+          id?: number
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      buddy_matches: {
+        Row: {
+          buddy_id: string | null
+          connected_at: string | null
+          id: number
+          user_id: string | null
+        }
+        Insert: {
+          buddy_id?: string | null
+          connected_at?: string | null
+          id?: number
+          user_id?: string | null
+        }
+        Update: {
+          buddy_id?: string | null
+          connected_at?: string | null
+          id?: number
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      events_places: {
+        Row: {
+          date: string
+          description: string | null
+          id: number
+          image_url: string | null
+          location: string
+          title: string
+        }
+        Insert: {
+          date: string
+          description?: string | null
+          id?: number
+          image_url?: string | null
+          location: string
+          title: string
+        }
+        Update: {
+          date?: string
+          description?: string | null
+          id?: number
+          image_url?: string | null
+          location?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          content: string
+          id: number
+          recipient_id: string | null
+          sender_id: string | null
+          sent_at: string | null
+        }
+        Insert: {
+          content: string
+          id?: number
+          recipient_id?: string | null
+          sender_id?: string | null
+          sent_at?: string | null
+        }
+        Update: {
+          content?: string
+          id?: number
+          recipient_id?: string | null
+          sender_id?: string | null
+          sent_at?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      USerprofile: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          full_name: string | null
+          id: string
+          updated_at: string | null
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string | null
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

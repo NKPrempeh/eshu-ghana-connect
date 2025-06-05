@@ -1,12 +1,12 @@
 
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LogIn } from "lucide-react";
+import { LogIn, CheckCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
@@ -17,6 +17,26 @@ const Login = () => {
   const { signIn, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Check for email confirmation
+  useEffect(() => {
+    const error = searchParams.get('error');
+    const errorDescription = searchParams.get('error_description');
+    
+    if (error) {
+      toast({
+        title: "Authentication Error",
+        description: errorDescription || "There was an error with email confirmation",
+        variant: "destructive",
+      });
+    } else if (searchParams.get('type') === 'signup') {
+      toast({
+        title: "Email Confirmed!",
+        description: "Your email has been confirmed. You can now log in.",
+      });
+    }
+  }, [searchParams, toast]);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -32,6 +52,7 @@ const Login = () => {
     const { error } = await signIn(email, password);
 
     if (error) {
+      console.error('Login error:', error);
       toast({
         title: "Error",
         description: error.message,
@@ -108,6 +129,16 @@ const Login = () => {
                   </Link>
                 </div>
               </form>
+              
+              {/* Email confirmation notice */}
+              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="flex items-start space-x-2">
+                  <CheckCircle className="text-blue-500 mt-0.5" size={16} />
+                  <div className="text-sm text-blue-700">
+                    <strong>Email Confirmation:</strong> After signing up, check your email and click the confirmation link. You'll be redirected back here to log in.
+                  </div>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>

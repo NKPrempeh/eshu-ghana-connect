@@ -28,15 +28,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    );
-
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -44,11 +35,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(false);
     });
 
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth event:', event, session);
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+        
+        // Handle email confirmation
+        if (event === 'SIGNED_IN' && session) {
+          console.log('User signed in successfully');
+        }
+      }
+    );
+
     return () => subscription.unsubscribe();
   }, []);
 
   const signUp = async (email: string, password: string, userData?: any) => {
-    const redirectUrl = `${window.location.origin}/`;
+    // Use the current origin for redirect
+    const redirectUrl = `${window.location.origin}/login`;
+    
+    console.log('Signing up with redirect URL:', redirectUrl);
     
     const { error } = await supabase.auth.signUp({
       email,
@@ -58,14 +67,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         data: userData
       }
     });
+    
+    console.log('Signup result:', { error });
     return { error };
   };
 
   const signIn = async (email: string, password: string) => {
+    console.log('Attempting to sign in:', email);
+    
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
+    
+    console.log('Signin result:', { error });
     return { error };
   };
 

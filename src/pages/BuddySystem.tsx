@@ -6,149 +6,27 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MessageCircle, MapPin, Star, Users, Search, Filter, Send } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
-interface BuddyProfile {
-  id: string;
-  name: string;
-  location: string;
-  bio: string;
-  specialties: string[];
-  languages: string[];
-  avatar_url: string;
-  rating: number;
-  review_count: number;
-  response_time: string;
-}
-
-interface Message {
-  id: string;
-  content: string;
-  sender_id: string;
-  sent_at: string;
-}
-
-interface Connection {
-  id: string;
-  buddy_id: string;
-  status: string;
-}
+import { useBuddySystem } from "@/hooks/useBuddySystem";
+import { BuddyProfile, Message } from "@/types/buddy-system";
 
 const BuddySystem = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [buddies, setBuddies] = useState<BuddyProfile[]>([]);
-  const [connections, setConnections] = useState<Connection[]>([]);
   const [selectedBuddy, setSelectedBuddy] = useState<BuddyProfile | null>(null);
   const [chatOpen, setChatOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const { user } = useAuth();
-
-  useEffect(() => {
-    fetchBuddies();
-    if (user) {
-      fetchConnections();
-    }
-  }, [user]);
-
-  const fetchBuddies = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('buddy_profiles' as any)
-        .select('*')
-        .eq('is_available', true);
-
-      if (error) {
-        console.error('Error fetching buddies:', error);
-      } else {
-        setBuddies(data as BuddyProfile[] || []);
-      }
-    } catch (error) {
-      console.error('Error fetching buddies:', error);
-    }
-    setLoading(false);
-  };
-
-  const fetchConnections = async () => {
-    if (!user) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('buddy_connections' as any)
-        .select('*')
-        .eq('user_id', user.id);
-
-      if (error) {
-        console.error('Error fetching connections:', error);
-      } else {
-        setConnections(data as Connection[] || []);
-      }
-    } catch (error) {
-      console.error('Error fetching connections:', error);
-    }
-  };
-
-  const handleConnectBuddy = async (buddy: BuddyProfile) => {
-    if (!user) {
-      toast({
-        title: "Please log in",
-        description: "You need to be logged in to connect with buddies.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Check if already connected
-    const existingConnection = connections.find(c => c.buddy_id === buddy.id);
-    if (existingConnection) {
-      toast({
-        title: "Already connected",
-        description: `You already have a ${existingConnection.status} connection with ${buddy.name}.`,
-      });
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('buddy_connections' as any)
-        .insert([
-          { user_id: user.id, buddy_id: buddy.id, status: 'accepted' }
-        ]);
-
-      if (error) {
-        console.error('Error creating connection:', error);
-        toast({
-          title: "Error",
-          description: "Failed to connect with buddy. Please try again.",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Connection successful!",
-          description: `You are now connected with ${buddy.name}. You can start chatting!`,
-        });
-        fetchConnections();
-      }
-    } catch (error) {
-      console.error('Error creating connection:', error);
-      toast({
-        title: "Error",
-        description: "Failed to connect with buddy. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
+  const { buddies, loading, handleConnectBuddy, getConnectionStatus } = useBuddySystem();
 
   const openChat = async (buddy: BuddyProfile) => {
-    const connection = connections.find(c => c.buddy_id === buddy.id && c.status === 'accepted');
-    if (!connection) {
+    const connectionStatus = getConnectionStatus(buddy.id);
+    if (connectionStatus !== 'accepted') {
       toast({
         title: "Not connected",
         description: "You need to connect with this buddy first to start chatting.",
@@ -218,11 +96,6 @@ const BuddySystem = () => {
       
       setMessages(prev => [...prev, buddyResponse]);
     }, 1000 + Math.random() * 2000);
-  };
-
-  const getConnectionStatus = (buddyId: string) => {
-    const connection = connections.find(c => c.buddy_id === buddyId);
-    return connection?.status || null;
   };
 
   const filteredBuddies = buddies.filter(buddy =>

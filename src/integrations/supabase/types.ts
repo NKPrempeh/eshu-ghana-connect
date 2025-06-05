@@ -30,6 +30,38 @@ export type Database = {
         }
         Relationships: []
       }
+      buddy_connections: {
+        Row: {
+          buddy_id: string | null
+          created_at: string | null
+          id: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          buddy_id?: string | null
+          created_at?: string | null
+          id?: string
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          buddy_id?: string | null
+          created_at?: string | null
+          id?: string
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "buddy_connections_buddy_id_fkey"
+            columns: ["buddy_id"]
+            isOneToOne: false
+            referencedRelation: "buddy_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       buddy_matches: {
         Row: {
           buddy_id: string | null
@@ -48,6 +80,87 @@ export type Database = {
           connected_at?: string | null
           id?: number
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      buddy_profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string
+          created_at: string | null
+          id: string
+          is_available: boolean | null
+          languages: string[]
+          location: string
+          name: string
+          rating: number | null
+          response_time: string | null
+          review_count: number | null
+          specialties: string[]
+          user_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio: string
+          created_at?: string | null
+          id?: string
+          is_available?: boolean | null
+          languages?: string[]
+          location: string
+          name: string
+          rating?: number | null
+          response_time?: string | null
+          review_count?: number | null
+          specialties?: string[]
+          user_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string
+          created_at?: string | null
+          id?: string
+          is_available?: boolean | null
+          languages?: string[]
+          location?: string
+          name?: string
+          rating?: number | null
+          response_time?: string | null
+          review_count?: number | null
+          specialties?: string[]
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      cultural_lessons: {
+        Row: {
+          content: Json
+          created_at: string | null
+          description: string
+          difficulty: string
+          duration: string
+          icon: string
+          id: number
+          title: string
+        }
+        Insert: {
+          content?: Json
+          created_at?: string | null
+          description: string
+          difficulty: string
+          duration: string
+          icon: string
+          id?: number
+          title: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string | null
+          description?: string
+          difficulty?: string
+          duration?: string
+          icon?: string
+          id?: number
+          title?: string
         }
         Relationships: []
       }
@@ -128,6 +241,35 @@ export type Database = {
           username?: string | null
         }
         Relationships: []
+      }
+      user_lesson_progress: {
+        Row: {
+          completed_at: string | null
+          id: string
+          lesson_id: number | null
+          user_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          id?: string
+          lesson_id?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          id?: string
+          lesson_id?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_lesson_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "cultural_lessons"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       USerprofile: {
         Row: {

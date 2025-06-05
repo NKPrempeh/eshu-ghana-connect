@@ -1,32 +1,15 @@
 
-import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { CheckCircle, Clock, Star, BookOpen, Users, Languages, Utensils, Music, MapPin } from "lucide-react";
+import { BookOpen, Users, Languages, Utensils, Music, MapPin } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-
-interface Lesson {
-  id: number;
-  title: string;
-  description: string;
-  content: string[];
-  duration: string;
-  difficulty: string;
-  icon: string;
-  completed?: boolean;
-}
+import { LessonCard } from "@/components/cultural-training/LessonCard";
+import { ProgressCard } from "@/components/cultural-training/ProgressCard";
+import { useCulturalTraining } from "@/hooks/useCulturalTraining";
 
 const CulturalTraining = () => {
-  const [lessons, setLessons] = useState<Lesson[]>([]);
-  const [userProgress, setUserProgress] = useState<number[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { lessons, userProgress, loading, markLessonComplete } = useCulturalTraining();
   const { user } = useAuth();
-  const { toast } = useToast();
 
   const iconMap: { [key: string]: any } = {
     Languages,
@@ -35,106 +18,6 @@ const CulturalTraining = () => {
     Users,
     MapPin,
     BookOpen
-  };
-
-  useEffect(() => {
-    fetchLessons();
-    if (user) {
-      fetchUserProgress();
-    }
-  }, [user]);
-
-  const fetchLessons = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('cultural_lessons' as any)
-        .select('*')
-        .order('id');
-
-      if (error) {
-        console.error('Error fetching lessons:', error);
-      } else {
-        const formattedLessons = (data as any[]).map((lesson: any) => ({
-          ...lesson,
-          content: Array.isArray(lesson.content) ? lesson.content : JSON.parse(lesson.content || '[]')
-        }));
-        setLessons(formattedLessons);
-      }
-    } catch (error) {
-      console.error('Error fetching lessons:', error);
-    }
-    setLoading(false);
-  };
-
-  const fetchUserProgress = async () => {
-    if (!user) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('user_lesson_progress' as any)
-        .select('lesson_id')
-        .eq('user_id', user.id);
-
-      if (error) {
-        console.error('Error fetching progress:', error);
-      } else {
-        setUserProgress((data as any[]).map((p: any) => p.lesson_id));
-      }
-    } catch (error) {
-      console.error('Error fetching progress:', error);
-    }
-  };
-
-  const markLessonComplete = async (lessonId: number) => {
-    if (!user) {
-      toast({
-        title: "Please log in",
-        description: "You need to be logged in to track progress.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('user_lesson_progress' as any)
-        .insert([
-          { user_id: user.id, lesson_id: lessonId }
-        ]);
-
-      if (error) {
-        console.error('Error marking lesson complete:', error);
-        toast({
-          title: "Error",
-          description: "Failed to save progress. Please try again.",
-          variant: "destructive",
-        });
-      } else {
-        setUserProgress(prev => [...prev, lessonId]);
-        toast({
-          title: "Lesson completed!",
-          description: "Your progress has been saved.",
-        });
-      }
-    } catch (error) {
-      console.error('Error marking lesson complete:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save progress. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const progressPercentage = lessons.length > 0 ? (userProgress.length / lessons.length) * 100 : 0;
-
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty.toLowerCase()) {
-      case 'beginner': return 'bg-green-100 text-green-800';
-      case 'intermediate': return 'bg-yellow-100 text-yellow-800';
-      case 'advanced': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
   };
 
   if (loading) {
@@ -163,23 +46,10 @@ const CulturalTraining = () => {
         </div>
 
         {user && (
-          <Card className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Star className="text-primary" size={24} />
-                Your Progress
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Completed: {userProgress.length} / {lessons.length} lessons</span>
-                  <span>{Math.round(progressPercentage)}%</span>
-                </div>
-                <Progress value={progressPercentage} className="w-full" />
-              </div>
-            </CardContent>
-          </Card>
+          <ProgressCard 
+            completedLessons={userProgress.length} 
+            totalLessons={lessons.length} 
+          />
         )}
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -188,60 +58,13 @@ const CulturalTraining = () => {
             const isCompleted = userProgress.includes(lesson.id);
             
             return (
-              <Card key={lesson.id} className={`hover:shadow-lg transition-all duration-300 hover:-translate-y-1 ${isCompleted ? 'border-green-200 bg-green-50' : ''}`}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${isCompleted ? 'bg-green-100' : 'ghana-gradient'}`}>
-                        {isCompleted ? (
-                          <CheckCircle className="text-green-600" size={24} />
-                        ) : (
-                          <IconComponent className="text-white" size={24} />
-                        )}
-                      </div>
-                      <div>
-                        <CardTitle className="text-lg">{lesson.title}</CardTitle>
-                        <div className="flex items-center gap-2 mt-1">
-                          <Clock size={16} className="text-gray-500" />
-                          <span className="text-sm text-gray-500">{lesson.duration}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <Badge className={getDifficultyColor(lesson.difficulty)}>
-                      {lesson.difficulty}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="mb-4">
-                    {lesson.description}
-                  </CardDescription>
-                  <div className="space-y-2 mb-4">
-                    <h4 className="font-medium text-sm">What you'll learn:</h4>
-                    <ul className="text-sm text-gray-600 space-y-1">
-                      {lesson.content.slice(0, 3).map((item, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0"></span>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  {isCompleted ? (
-                    <Button disabled className="w-full" variant="outline">
-                      <CheckCircle className="mr-2" size={16} />
-                      Completed
-                    </Button>
-                  ) : (
-                    <Button 
-                      onClick={() => markLessonComplete(lesson.id)}
-                      className="w-full"
-                    >
-                      Mark as Complete
-                    </Button>
-                  )}
-                </CardContent>
-              </Card>
+              <LessonCard
+                key={lesson.id}
+                lesson={lesson}
+                isCompleted={isCompleted}
+                onMarkComplete={markLessonComplete}
+                iconComponent={IconComponent}
+              />
             );
           })}
         </div>

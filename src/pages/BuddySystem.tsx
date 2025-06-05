@@ -59,15 +59,19 @@ const BuddySystem = () => {
   }, [user]);
 
   const fetchBuddies = async () => {
-    const { data, error } = await supabase
-      .from('buddy_profiles')
-      .select('*')
-      .eq('is_available', true);
+    try {
+      const { data, error } = await supabase
+        .from('buddy_profiles' as any)
+        .select('*')
+        .eq('is_available', true);
 
-    if (error) {
+      if (error) {
+        console.error('Error fetching buddies:', error);
+      } else {
+        setBuddies(data as BuddyProfile[] || []);
+      }
+    } catch (error) {
       console.error('Error fetching buddies:', error);
-    } else {
-      setBuddies(data || []);
     }
     setLoading(false);
   };
@@ -75,15 +79,19 @@ const BuddySystem = () => {
   const fetchConnections = async () => {
     if (!user) return;
 
-    const { data, error } = await supabase
-      .from('buddy_connections')
-      .select('*')
-      .eq('user_id', user.id);
+    try {
+      const { data, error } = await supabase
+        .from('buddy_connections' as any)
+        .select('*')
+        .eq('user_id', user.id);
 
-    if (error) {
+      if (error) {
+        console.error('Error fetching connections:', error);
+      } else {
+        setConnections(data as Connection[] || []);
+      }
+    } catch (error) {
       console.error('Error fetching connections:', error);
-    } else {
-      setConnections(data || []);
     }
   };
 
@@ -107,25 +115,34 @@ const BuddySystem = () => {
       return;
     }
 
-    const { error } = await supabase
-      .from('buddy_connections')
-      .insert([
-        { user_id: user.id, buddy_id: buddy.id, status: 'accepted' }
-      ]);
+    try {
+      const { error } = await supabase
+        .from('buddy_connections' as any)
+        .insert([
+          { user_id: user.id, buddy_id: buddy.id, status: 'accepted' }
+        ]);
 
-    if (error) {
+      if (error) {
+        console.error('Error creating connection:', error);
+        toast({
+          title: "Error",
+          description: "Failed to connect with buddy. Please try again.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Connection successful!",
+          description: `You are now connected with ${buddy.name}. You can start chatting!`,
+        });
+        fetchConnections();
+      }
+    } catch (error) {
       console.error('Error creating connection:', error);
       toast({
         title: "Error",
         description: "Failed to connect with buddy. Please try again.",
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "Connection successful!",
-        description: `You are now connected with ${buddy.name}. You can start chatting!`,
-      });
-      fetchConnections();
     }
   };
 

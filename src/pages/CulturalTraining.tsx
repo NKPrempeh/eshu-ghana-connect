@@ -45,19 +45,23 @@ const CulturalTraining = () => {
   }, [user]);
 
   const fetchLessons = async () => {
-    const { data, error } = await supabase
-      .from('cultural_lessons')
-      .select('*')
-      .order('id');
+    try {
+      const { data, error } = await supabase
+        .from('cultural_lessons' as any)
+        .select('*')
+        .order('id');
 
-    if (error) {
+      if (error) {
+        console.error('Error fetching lessons:', error);
+      } else {
+        const formattedLessons = (data as any[]).map((lesson: any) => ({
+          ...lesson,
+          content: Array.isArray(lesson.content) ? lesson.content : JSON.parse(lesson.content || '[]')
+        }));
+        setLessons(formattedLessons);
+      }
+    } catch (error) {
       console.error('Error fetching lessons:', error);
-    } else {
-      const formattedLessons = data.map(lesson => ({
-        ...lesson,
-        content: lesson.content as string[]
-      }));
-      setLessons(formattedLessons);
     }
     setLoading(false);
   };
@@ -65,15 +69,19 @@ const CulturalTraining = () => {
   const fetchUserProgress = async () => {
     if (!user) return;
 
-    const { data, error } = await supabase
-      .from('user_lesson_progress')
-      .select('lesson_id')
-      .eq('user_id', user.id);
+    try {
+      const { data, error } = await supabase
+        .from('user_lesson_progress' as any)
+        .select('lesson_id')
+        .eq('user_id', user.id);
 
-    if (error) {
+      if (error) {
+        console.error('Error fetching progress:', error);
+      } else {
+        setUserProgress((data as any[]).map((p: any) => p.lesson_id));
+      }
+    } catch (error) {
       console.error('Error fetching progress:', error);
-    } else {
-      setUserProgress(data.map(p => p.lesson_id));
     }
   };
 
@@ -87,24 +95,33 @@ const CulturalTraining = () => {
       return;
     }
 
-    const { error } = await supabase
-      .from('user_lesson_progress')
-      .insert([
-        { user_id: user.id, lesson_id: lessonId }
-      ]);
+    try {
+      const { error } = await supabase
+        .from('user_lesson_progress' as any)
+        .insert([
+          { user_id: user.id, lesson_id: lessonId }
+        ]);
 
-    if (error) {
+      if (error) {
+        console.error('Error marking lesson complete:', error);
+        toast({
+          title: "Error",
+          description: "Failed to save progress. Please try again.",
+          variant: "destructive",
+        });
+      } else {
+        setUserProgress(prev => [...prev, lessonId]);
+        toast({
+          title: "Lesson completed!",
+          description: "Your progress has been saved.",
+        });
+      }
+    } catch (error) {
       console.error('Error marking lesson complete:', error);
       toast({
         title: "Error",
         description: "Failed to save progress. Please try again.",
         variant: "destructive",
-      });
-    } else {
-      setUserProgress(prev => [...prev, lessonId]);
-      toast({
-        title: "Lesson completed!",
-        description: "Your progress has been saved.",
       });
     }
   };

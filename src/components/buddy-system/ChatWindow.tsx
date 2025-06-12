@@ -8,15 +8,7 @@ import { Send, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { BuddyProfile } from "@/types/buddy-system";
-
-interface Message {
-  id: string;
-  content: string;
-  sender_id: string;
-  recipient_id: string;
-  sent_at: string;
-}
+import { BuddyProfile, Message } from "@/types/buddy-system";
 
 interface ChatWindowProps {
   buddy: BuddyProfile;
@@ -58,7 +50,15 @@ export const ChatWindow = ({ buddy, onClose }: ChatWindowProps) => {
       if (error) {
         console.error('Error fetching messages:', error);
       } else {
-        setMessages(data || []);
+        // Convert database messages to proper Message type
+        const convertedMessages: Message[] = (data || []).map(msg => ({
+          id: msg.id.toString(),
+          content: msg.content,
+          sender_id: msg.sender_id,
+          recipient_id: msg.recipient_id,
+          sent_at: msg.sent_at
+        }));
+        setMessages(convertedMessages);
       }
     } catch (error) {
       console.error('Error fetching messages:', error);
@@ -79,7 +79,14 @@ export const ChatWindow = ({ buddy, onClose }: ChatWindowProps) => {
           filter: `or(and(sender_id.eq.${user.id},recipient_id.eq.${buddy.user_id}),and(sender_id.eq.${buddy.user_id},recipient_id.eq.${user.id}))`
         },
         (payload) => {
-          const newMessage = payload.new as Message;
+          const dbMessage = payload.new as any;
+          const newMessage: Message = {
+            id: dbMessage.id.toString(),
+            content: dbMessage.content,
+            sender_id: dbMessage.sender_id,
+            recipient_id: dbMessage.recipient_id,
+            sent_at: dbMessage.sent_at
+          };
           setMessages(prev => [...prev, newMessage]);
         }
       )

@@ -1,6 +1,7 @@
 
 export interface BuddyProfile {
   id: string;
+  user_id: string;
   name: string;
   location: string;
   bio: string;
@@ -16,6 +17,7 @@ export interface Message {
   id: string;
   content: string;
   sender_id: string;
+  recipient_id: string;
   sent_at: string;
 }
 

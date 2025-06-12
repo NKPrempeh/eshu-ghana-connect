@@ -2,17 +2,24 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Clock } from "lucide-react";
+import { CheckCircle, Clock, Play } from "lucide-react";
 import { Lesson } from "@/types/cultural-training";
 
 interface LessonCardProps {
   lesson: Lesson;
   isCompleted: boolean;
   onMarkComplete: (lessonId: number) => void;
+  onStartLesson: () => void;
   iconComponent: React.ComponentType<{ size?: number; className?: string }>;
 }
 
-export const LessonCard = ({ lesson, isCompleted, onMarkComplete, iconComponent: IconComponent }: LessonCardProps) => {
+export const LessonCard = ({ 
+  lesson, 
+  isCompleted, 
+  onMarkComplete, 
+  onStartLesson,
+  iconComponent: IconComponent 
+}: LessonCardProps) => {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty.toLowerCase()) {
       case 'beginner': return 'bg-green-100 text-green-800';
@@ -62,19 +69,31 @@ export const LessonCard = ({ lesson, isCompleted, onMarkComplete, iconComponent:
             ))}
           </ul>
         </div>
-        {isCompleted ? (
-          <Button disabled className="w-full" variant="outline">
-            <CheckCircle className="mr-2" size={16} />
-            Completed
-          </Button>
-        ) : (
-          <Button 
-            onClick={() => onMarkComplete(lesson.id)}
-            className="w-full"
-          >
-            Mark as Complete
-          </Button>
-        )}
+        <div className="space-y-2">
+          {!isCompleted && (
+            <Button 
+              onClick={onStartLesson}
+              className="w-full ghana-gradient"
+            >
+              <Play className="mr-2" size={16} />
+              Start Lesson
+            </Button>
+          )}
+          {isCompleted ? (
+            <Button disabled className="w-full" variant="outline">
+              <CheckCircle className="mr-2" size={16} />
+              Completed
+            </Button>
+          ) : (
+            <Button 
+              onClick={() => onMarkComplete(lesson.id)}
+              variant="outline"
+              className="w-full"
+            >
+              Mark as Complete
+            </Button>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

@@ -1,16 +1,20 @@
 
+import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Calendar, Camera, Star } from "lucide-react";
+import { EventMap } from "@/components/events/EventMap";
 
 const EventsAndPlaces = () => {
+  const [selectedLocation, setSelectedLocation] = useState<{title: string; location: string} | null>(null);
+
   const places = [
     {
       name: "Cape Coast Castle",
       description: "Historic slave fort and UNESCO World Heritage site with deep cultural significance.",
       image: "https://images.unsplash.com/photo-1466442929976-97f336a657be?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      location: "Cape Coast",
+      location: "Cape Coast, Central Region",
       rating: 4.8
     },
     {
@@ -24,7 +28,7 @@ const EventsAndPlaces = () => {
       name: "Elmina Castle",
       description: "Another UNESCO site, one of the oldest European buildings in sub-Saharan Africa.",
       image: "https://images.unsplash.com/photo-1492321936769-b49830bc1d1e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      location: "Elmina",
+      location: "Elmina, Central Region",
       rating: 4.6
     },
     {
@@ -41,27 +45,35 @@ const EventsAndPlaces = () => {
       name: "Homowo Festival",
       date: "August 2024",
       description: "Traditional harvest festival celebrated by the Ga people in Accra.",
-      type: "Cultural Festival"
+      type: "Cultural Festival",
+      location: "Accra, Greater Accra"
     },
     {
       name: "Chale Wote Street Art Festival",
       date: "August 2024",
       description: "Contemporary art festival in Jamestown, showcasing local and international artists.",
-      type: "Art & Culture"
+      type: "Art & Culture",
+      location: "Jamestown, Accra"
     },
     {
       name: "Aboakyer Festival",
       date: "May 2024",
       description: "Deer hunting festival celebrated by the people of Winneba.",
-      type: "Traditional Festival"
+      type: "Traditional Festival",
+      location: "Winneba, Central Region"
     },
     {
       name: "Ghana Music Awards",
       date: "June 2024",
       description: "Annual awards ceremony celebrating Ghanaian music and artists.",
-      type: "Music & Entertainment"
+      type: "Music & Entertainment",
+      location: "Accra International Conference Centre"
     }
   ];
+
+  const handleViewOnMap = (name: string, location: string) => {
+    setSelectedLocation({ title: name, location });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
@@ -118,10 +130,20 @@ const EventsAndPlaces = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700 mb-4">{place.description}</p>
-                  <Button variant="outline" className="w-full">
-                    <Camera className="mr-2" size={16} />
-                    View Details
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => handleViewOnMap(place.name, place.location)}
+                    >
+                      <MapPin className="mr-2" size={16} />
+                      View on Map
+                    </Button>
+                    <Button variant="outline" className="flex-1">
+                      <Camera className="mr-2" size={16} />
+                      Gallery
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -149,6 +171,9 @@ const EventsAndPlaces = () => {
                       <CardDescription className="text-primary font-medium">
                         {event.type}
                       </CardDescription>
+                      <CardDescription className="text-sm text-gray-600 mt-1">
+                        {event.location}
+                      </CardDescription>
                     </div>
                     <div className="text-right">
                       <div className="text-sm text-gray-600">{event.date}</div>
@@ -157,9 +182,19 @@ const EventsAndPlaces = () => {
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-700 mb-4">{event.description}</p>
-                  <Button variant="ghost" className="text-primary hover:text-primary">
-                    Learn More
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="ghost" 
+                      className="text-primary hover:text-primary flex-1"
+                      onClick={() => handleViewOnMap(event.name, event.location)}
+                    >
+                      <MapPin className="mr-2" size={16} />
+                      View Location
+                    </Button>
+                    <Button variant="ghost" className="text-primary hover:text-primary flex-1">
+                      Learn More
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -179,6 +214,14 @@ const EventsAndPlaces = () => {
           </Button>
         </div>
       </section>
+
+      {selectedLocation && (
+        <EventMap
+          title={selectedLocation.title}
+          location={selectedLocation.location}
+          onClose={() => setSelectedLocation(null)}
+        />
+      )}
     </div>
   );
 };

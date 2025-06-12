@@ -1,15 +1,19 @@
 
+import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Users, Languages, Utensils, Music, MapPin } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { LessonCard } from "@/components/cultural-training/LessonCard";
 import { ProgressCard } from "@/components/cultural-training/ProgressCard";
+import { LessonViewer } from "@/components/cultural-training/LessonViewer";
 import { useCulturalTraining } from "@/hooks/useCulturalTraining";
+import { Lesson } from "@/types/cultural-training";
 
 const CulturalTraining = () => {
   const { lessons, userProgress, loading, markLessonComplete } = useCulturalTraining();
   const { user } = useAuth();
+  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
 
   const iconMap: { [key: string]: any } = {
     Languages,
@@ -18,6 +22,21 @@ const CulturalTraining = () => {
     Users,
     MapPin,
     BookOpen
+  };
+
+  const handleStartLesson = (lesson: Lesson) => {
+    setSelectedLesson(lesson);
+  };
+
+  const handleCompleteLesson = () => {
+    if (selectedLesson) {
+      markLessonComplete(selectedLesson.id);
+      setSelectedLesson(null);
+    }
+  };
+
+  const handleCloseLesson = () => {
+    setSelectedLesson(null);
   };
 
   if (loading) {
@@ -62,7 +81,8 @@ const CulturalTraining = () => {
                 key={lesson.id}
                 lesson={lesson}
                 isCompleted={isCompleted}
-                onMarkComplete={markLessonComplete}
+                onMarkComplete={() => markLessonComplete(lesson.id)}
+                onStartLesson={() => handleStartLesson(lesson)}
                 iconComponent={IconComponent}
               />
             );
@@ -80,6 +100,14 @@ const CulturalTraining = () => {
           </Card>
         )}
       </div>
+
+      {selectedLesson && (
+        <LessonViewer
+          lesson={selectedLesson}
+          onComplete={handleCompleteLesson}
+          onClose={handleCloseLesson}
+        />
+      )}
     </div>
   );
 };

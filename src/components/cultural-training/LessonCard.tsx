@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Clock, Play } from "lucide-react";
+import { CheckCircle, Clock, Play, RotateCcw } from "lucide-react";
 import { Lesson } from "@/types/cultural-training";
 
 interface LessonCardProps {
@@ -70,21 +70,23 @@ export const LessonCard = ({
           </ul>
         </div>
         <div className="space-y-2">
+          <Button 
+            onClick={onStartLesson}
+            className="w-full ghana-gradient"
+          >
+            {isCompleted ? (
+              <>
+                <RotateCcw className="mr-2" size={16} />
+                Retake Lesson
+              </>
+            ) : (
+              <>
+                <Play className="mr-2" size={16} />
+                Start Lesson
+              </>
+            )}
+          </Button>
           {!isCompleted && (
-            <Button 
-              onClick={onStartLesson}
-              className="w-full ghana-gradient"
-            >
-              <Play className="mr-2" size={16} />
-              Start Lesson
-            </Button>
-          )}
-          {isCompleted ? (
-            <Button disabled className="w-full" variant="outline">
-              <CheckCircle className="mr-2" size={16} />
-              Completed
-            </Button>
-          ) : (
             <Button 
               onClick={() => onMarkComplete(lesson.id)}
               variant="outline"

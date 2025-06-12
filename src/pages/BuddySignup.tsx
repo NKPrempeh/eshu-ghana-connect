@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
@@ -69,9 +68,30 @@ const BuddySignup = () => {
           variant: "destructive",
         });
       } else {
+        // Send email to the applicant
+        try {
+          const emailResponse = await supabase.functions.invoke('send-buddy-signup-email', {
+            body: {
+              applicantName: formData.name,
+              applicantEmail: user.email,
+              location: formData.location,
+              bio: formData.bio,
+              specialties: specialtiesArray,
+              languages: languagesArray
+            }
+          });
+          
+          if (emailResponse.error) {
+            console.error('Error sending email:', emailResponse.error);
+          }
+        } catch (emailError) {
+          console.error('Error sending signup email:', emailError);
+          // Don't fail the whole process if email fails
+        }
+
         toast({
           title: "Application Submitted!",
-          description: "Your buddy application has been submitted for review. We'll contact you soon!",
+          description: "Your buddy application has been submitted for review. Check your email for next steps!",
         });
         navigate("/buddy-system");
       }
@@ -231,12 +251,13 @@ const BuddySignup = () => {
                 </div>
 
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                  <h3 className="font-semibold text-yellow-800 mb-2">Vetting Process</h3>
+                  <h3 className="font-semibold text-yellow-800 mb-2">Vetting Process & Next Steps</h3>
                   <ul className="text-sm text-yellow-700 space-y-1">
-                    <li>• Your application will be reviewed by our team</li>
-                    <li>• We may contact you for a brief interview</li>
-                    <li>• Background verification may be required</li>
-                    <li>• Approval typically takes 3-5 business days</li>
+                    <li>• You'll receive an email with required documents</li>
+                    <li>• Submit ID, proof of residence, and references</li>
+                    <li>• Background verification (3-5 business days)</li>
+                    <li>• Video interview with our team</li>
+                    <li>• Final approval typically takes 7-10 days</li>
                   </ul>
                 </div>
 

@@ -28,14 +28,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    // Set up auth state listener
+    // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth event:', event, session);
@@ -43,19 +36,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(session?.user ?? null);
         setLoading(false);
         
-        // Handle email confirmation
+        // Handle email confirmation - redirect to home page when signed in
         if (event === 'SIGNED_IN' && session) {
           console.log('User signed in successfully');
+          // If we're on login page and user just confirmed email, redirect to home
+          if (window.location.pathname === '/login') {
+            window.location.href = '/';
+          }
         }
       }
     );
+
+    // Then get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
 
     return () => subscription.unsubscribe();
   }, []);
 
   const signUp = async (email: string, password: string, userData?: any) => {
-    // Use the current origin for redirect
-    const redirectUrl = `${window.location.origin}/login`;
+    // Use the current origin for redirect URL
+    const redirectUrl = `${window.location.origin}/`;
     
     console.log('Signing up with redirect URL:', redirectUrl);
     

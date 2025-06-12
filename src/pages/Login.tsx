@@ -30,11 +30,15 @@ const Login = () => {
         description: errorDescription || "There was an error with email confirmation",
         variant: "destructive",
       });
-    } else if (searchParams.get('type') === 'signup') {
-      toast({
-        title: "Email Confirmed!",
-        description: "Your email has been confirmed. You can now log in.",
-      });
+    } else if (searchParams.has('type')) {
+      // Handle different auth events
+      const type = searchParams.get('type');
+      if (type === 'signup') {
+        toast({
+          title: "Email Confirmed!",
+          description: "Your email has been confirmed. You are now logged in!",
+        });
+      }
     }
   }, [searchParams, toast]);
 
@@ -135,7 +139,7 @@ const Login = () => {
                 <div className="flex items-start space-x-2">
                   <CheckCircle className="text-blue-500 mt-0.5" size={16} />
                   <div className="text-sm text-blue-700">
-                    <strong>Email Confirmation:</strong> After signing up, check your email and click the confirmation link. You'll be redirected back here to log in.
+                    <strong>Email Confirmation:</strong> After signing up, check your email and click the confirmation link. You'll be automatically logged in and redirected to the home page.
                   </div>
                 </div>
               </div>

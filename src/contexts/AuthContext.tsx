@@ -37,11 +37,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLoading(false);
         
         // Handle successful signup - automatically sign in the user
-        if (event === 'SIGNED_UP' && session) {
-          console.log('User signed up and automatically signed in');
-        }
-        
-        // Handle email confirmation - redirect to home page when signed in
         if (event === 'SIGNED_IN' && session) {
           console.log('User signed in successfully');
           // If we're on login page and user just confirmed email, redirect to home

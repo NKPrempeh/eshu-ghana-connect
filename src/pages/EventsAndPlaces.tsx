@@ -1,227 +1,106 @@
 
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { MapPin, Calendar, Camera, Star } from "lucide-react";
-import { EventMap } from "@/components/events/EventMap";
+import { EventCard } from "@/components/events/EventCard";
 
 const EventsAndPlaces = () => {
-  const [selectedLocation, setSelectedLocation] = useState<{title: string; location: string} | null>(null);
-
-  const places = [
+  const [events] = useState([
     {
-      name: "Cape Coast Castle",
-      description: "Historic slave fort and UNESCO World Heritage site with deep cultural significance.",
-      image: "https://images.unsplash.com/photo-1466442929976-97f336a657be?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      location: "Cape Coast, Central Region",
-      rating: 4.8
+      id: 1,
+      title: "Adae Festival",
+      description: "Traditional Ashanti festival celebrating the ancestors with drumming, dancing, and traditional foods.",
+      location: "Manhyia Palace, Kumasi",
+      date: "2024-01-15",
+      time: "6:00 AM - 6:00 PM",
+      category: "cultural",
+      attendees: 500,
+      // TO CHANGE THIS IMAGE: Replace the URL below with your desired image
+      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
+      // TO ADD MORE GALLERY IMAGES: Add URLs to this array
+      gallery: [
+        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=800&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop"
+      ]
     },
     {
-      name: "Kakum National Park",
-      description: "Experience the famous canopy walkway through pristine rainforest.",
-      image: "https://images.unsplash.com/photo-1517022812141-23620dba5c23?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      location: "Central Region",
-      rating: 4.7
+      id: 2,
+      title: "Cape Coast Castle Tour",
+      description: "Historical tour of the famous slave castle with guided educational sessions about Ghana's history.",
+      location: "Cape Coast Castle, Cape Coast",
+      date: "2024-01-20",
+      time: "9:00 AM - 4:00 PM",
+      category: "educational",
+      attendees: 150,
+      // TO CHANGE THIS IMAGE: Replace the URL below
+      image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
+      // TO ADD GALLERY IMAGES: Add URLs here
+      gallery: [
+        "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=800&h=600&fit=crop"
+      ]
     },
     {
-      name: "Elmina Castle",
-      description: "Another UNESCO site, one of the oldest European buildings in sub-Saharan Africa.",
-      image: "https://images.unsplash.com/photo-1492321936769-b49830bc1d1e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      location: "Elmina, Central Region",
-      rating: 4.6
+      id: 3,
+      title: "Homowo Festival",
+      description: "Ga traditional festival celebrating the harvest season with kpokpoi (traditional food) and cultural displays.",
+      location: "La Beach, Accra",
+      date: "2024-02-10",
+      time: "8:00 AM - 10:00 PM",
+      category: "festival",
+      attendees: 1000,
+      // TO CHANGE THIS IMAGE: Replace the URL below
+      image: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=800&h=600&fit=crop",
+      // TO ADD GALLERY IMAGES: Add URLs here
+      gallery: [
+        "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=800&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=800&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop"
+      ]
     },
     {
-      name: "Lake Volta",
-      description: "One of the world's largest artificial lakes, perfect for boat trips and fishing.",
-      image: "https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      location: "Eastern Region",
-      rating: 4.5
+      id: 4,
+      title: "Kumasi Market Experience",
+      description: "Guided tour of Kejetia Market, one of West Africa's largest markets, with cultural shopping experience.",
+      location: "Kejetia Market, Kumasi",
+      date: "2024-02-15",
+      time: "10:00 AM - 2:00 PM",
+      category: "social",
+      attendees: 80,
+      // TO CHANGE THIS IMAGE: Replace the URL below
+      image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
+      // TO ADD GALLERY IMAGES: Add URLs here
+      gallery: [
+        "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop",
+        "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=800&h=600&fit=crop"
+      ]
     }
-  ];
-
-  const events = [
-    {
-      name: "Homowo Festival",
-      date: "August 2024",
-      description: "Traditional harvest festival celebrated by the Ga people in Accra.",
-      type: "Cultural Festival",
-      location: "Accra, Greater Accra"
-    },
-    {
-      name: "Chale Wote Street Art Festival",
-      date: "August 2024",
-      description: "Contemporary art festival in Jamestown, showcasing local and international artists.",
-      type: "Art & Culture",
-      location: "Jamestown, Accra"
-    },
-    {
-      name: "Aboakyer Festival",
-      date: "May 2024",
-      description: "Deer hunting festival celebrated by the people of Winneba.",
-      type: "Traditional Festival",
-      location: "Winneba, Central Region"
-    },
-    {
-      name: "Ghana Music Awards",
-      date: "June 2024",
-      description: "Annual awards ceremony celebrating Ghanaian music and artists.",
-      type: "Music & Entertainment",
-      location: "Accra International Conference Centre"
-    }
-  ];
-
-  const handleViewOnMap = (name: string, location: string) => {
-    setSelectedLocation({ title: name, location });
-  };
+  ]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
       <Navigation />
       
-      {/* Hero Section */}
-      <section className="relative overflow-hidden py-20">
-        <div className="absolute inset-0 kente-pattern opacity-5"></div>
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6">
-              Discover Ghana
-              <span className="block text-primary mt-2">Events & Beautiful Places</span>
-            </h1>
-            <p className="text-xl text-gray-600 mb-8">
-              Explore the rich culture, stunning landscapes, and vibrant events that make Ghana special.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Places to Visit */}
-      <section className="py-20 bg-white/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center gap-3 mb-12">
-            <div className="w-12 h-12 ghana-gradient rounded-lg flex items-center justify-center">
-              <MapPin className="text-white" size={24} />
-            </div>
-            <h2 className="text-3xl font-bold text-gray-900">Places to Visit</h2>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
-            {places.map((place, index) => (
-              <Card key={index} className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                <div className="relative h-48 overflow-hidden">
-                  <img 
-                    src={place.image} 
-                    alt={place.name}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1">
-                    <Star className="text-yellow-500" size={16} />
-                    <span className="text-sm font-medium">{place.rating}</span>
-                  </div>
-                </div>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    {place.name}
-                    <MapPin size={16} className="text-primary" />
-                  </CardTitle>
-                  <CardDescription className="text-sm text-gray-600">
-                    {place.location}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-700 mb-4">{place.description}</p>
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      className="flex-1"
-                      onClick={() => handleViewOnMap(place.name, place.location)}
-                    >
-                      <MapPin className="mr-2" size={16} />
-                      View on Map
-                    </Button>
-                    <Button variant="outline" className="flex-1">
-                      <Camera className="mr-2" size={16} />
-                      Gallery
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Events */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center gap-3 mb-12">
-            <div className="w-12 h-12 ghana-gradient rounded-lg flex items-center justify-center">
-              <Calendar className="text-white" size={24} />
-            </div>
-            <h2 className="text-3xl font-bold text-gray-900">Upcoming Events</h2>
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-6">
-            {events.map((event, index) => (
-              <Card key={index} className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-primary">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-xl">{event.name}</CardTitle>
-                      <CardDescription className="text-primary font-medium">
-                        {event.type}
-                      </CardDescription>
-                      <CardDescription className="text-sm text-gray-600 mt-1">
-                        {event.location}
-                      </CardDescription>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm text-gray-600">{event.date}</div>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-700 mb-4">{event.description}</p>
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="ghost" 
-                      className="text-primary hover:text-primary flex-1"
-                      onClick={() => handleViewOnMap(event.name, event.location)}
-                    >
-                      <MapPin className="mr-2" size={16} />
-                      View Location
-                    </Button>
-                    <Button variant="ghost" className="text-primary hover:text-primary flex-1">
-                      Learn More
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Call to Action */}
-      <section className="py-20 bg-gradient-to-r from-green-600 to-yellow-500 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-6">Ready to Explore Ghana?</h2>
-          <p className="text-xl mb-8 opacity-90">
-            Join our community and get personalized recommendations for places and events.
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Events & Places
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Discover cultural events, festivals, and must-visit places in Ghana. Connect with your new community through shared experiences.
           </p>
-          <Button size="lg" variant="secondary">
-            Get Started with Eshu
-          </Button>
         </div>
-      </section>
 
-      {selectedLocation && (
-        <EventMap
-          title={selectedLocation.title}
-          location={selectedLocation.location}
-          onClose={() => setSelectedLocation(null)}
-        />
-      )}
+        <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
+          {events.map((event) => (
+            <EventCard key={event.id} event={event} />
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

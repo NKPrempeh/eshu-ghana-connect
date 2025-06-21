@@ -56,7 +56,7 @@ const BuddySignup = () => {
             languages: languagesArray,
             response_time: formData.response_time,
             avatar_url: formData.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.name}`,
-            is_available: false // Start as false for vetting
+            is_available: true // Make profiles available immediately
           }
         ]);
 
@@ -90,8 +90,8 @@ const BuddySignup = () => {
         }
 
         toast({
-          title: "Application Submitted!",
-          description: "Your buddy application has been submitted for review. Check your email for next steps!",
+          title: "Welcome as a Buddy!",
+          description: "Your buddy profile is now live and available to help newcomers!",
         });
         navigate("/buddy-system");
       }
@@ -250,23 +250,12 @@ const BuddySignup = () => {
                   <p className="text-sm text-gray-600">Leave blank to use an auto-generated avatar</p>
                 </div>
 
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                  <h3 className="font-semibold text-yellow-800 mb-2">Vetting Process & Next Steps</h3>
-                  <ul className="text-sm text-yellow-700 space-y-1">
-                    <li>• You'll receive an email with required documents</li>
-                    <li>• Submit ID, proof of residence, and references</li>
-                    <li>• Background verification (3-5 business days)</li>
-                    <li>• Video interview with our team</li>
-                    <li>• Final approval typically takes 7-10 days</li>
-                  </ul>
-                </div>
-
                 <Button 
                   type="submit" 
                   className="w-full ghana-gradient hover:opacity-90 transition-opacity"
                   disabled={loading}
                 >
-                  {loading ? "Submitting Application..." : "Submit Buddy Application"}
+                  {loading ? "Creating Profile..." : "Become a Buddy"}
                   <UserPlus className="ml-2" size={16} />
                 </Button>
               </form>

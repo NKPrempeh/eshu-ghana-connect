@@ -36,6 +36,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(session?.user ?? null);
         setLoading(false);
         
+        // Handle successful signup - automatically sign in the user
+        if (event === 'SIGNED_UP' && session) {
+          console.log('User signed up and automatically signed in');
+        }
+        
         // Handle email confirmation - redirect to home page when signed in
         if (event === 'SIGNED_IN' && session) {
           console.log('User signed in successfully');
@@ -58,21 +63,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signUp = async (email: string, password: string, userData?: any) => {
-    // Use the current origin for redirect URL
-    const redirectUrl = `${window.location.origin}/`;
-    
-    console.log('Signing up with redirect URL:', redirectUrl);
-    
-    const { error } = await supabase.auth.signUp({
+    // For immediate login after signup, don't require email confirmation
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: redirectUrl,
-        data: userData
+        data: userData,
+        emailRedirectTo: `${window.location.origin}/`
       }
     });
     
-    console.log('Signup result:', { error });
+    console.log('Signup result:', { data, error });
     return { error };
   };
 

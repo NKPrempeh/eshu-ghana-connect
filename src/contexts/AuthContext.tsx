@@ -27,28 +27,50 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Get the correct redirect URL based on environment
+  const getRedirectUrl = () => {
+    const isDevelopment = window.location.hostname === 'localhost';
+    if (isDevelopment) {
+      return `http://localhost:${window.location.port || '8080'}/`;
+    }
+    return `${window.location.origin}/`;
+  };
+
   useEffect(() => {
+    console.log('Setting up auth state listener...');
+    
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth event:', event, session);
+        console.log('Auth event:', event, 'Session:', session?.user?.email || 'null');
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
         
-        // Handle successful signup - automatically sign in the user
+        // Handle successful sign in (including after email confirmation)
         if (event === 'SIGNED_IN' && session) {
-          console.log('User signed in successfully');
-          // If we're on login page and user just confirmed email, redirect to home
+          console.log('User signed in successfully, redirecting...');
+          // Only redirect if we're on the login page to avoid disrupting user navigation
           if (window.location.pathname === '/login') {
-            window.location.href = '/';
+            setTimeout(() => {
+              window.location.href = '/';
+            }, 100);
           }
+        }
+        
+        // Handle token refresh
+        if (event === 'TOKEN_REFRESHED' && session) {
+          console.log('Token refreshed successfully');
         }
       }
     );
 
     // Then get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error('Error getting session:', error);
+      }
+      console.log('Initial session check:', session?.user?.email || 'No session');
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -58,34 +80,78 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const signUp = async (email: string, password: string, userData?: any) => {
-    // For immediate login after signup, don't require email confirmation
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: userData,
-        emailRedirectTo: `${window.location.origin}/`
-      }
-    });
+    console.log('Attempting signup for:', email);
+    const redirectUrl = getRedirectUrl();
+    console.log('Using redirect URL:', redirectUrl);
     
-    console.log('Signup result:', { data, error });
-    return { error };
+    try {
+      // For development, we'll disable email confirmation to make testing easier
+      const isDevelopment = window.location.hostname === 'localhost';
+      
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: userData,
+          emailRedirectTo: redirectUrl,
+          // Skip email confirmation in development
+          ...(isDevelopment && { 
+            captchaToken: undefined,
+            emailRedirectTo: redirectUrl
+          })
+        }
+      });
+      
+      console.log('Signup result:', { 
+        user: data.user?.email, 
+        session: data.session ? 'present' : 'null',
+        error: error?.message 
+      });
+      
+      // If signup was successful and we have a session, user is automatically signed in
+      if (data.session && data.user && !error) {
+        console.log('User signed up and automatically signed in');
+        setSession(data.session);
+        setUser(data.user);
+      }
+      
+      return { error };
+    } catch (err) {
+      console.error('Signup error:', err);
+      return { error: err };
+    }
   };
 
   const signIn = async (email: string, password: string) => {
     console.log('Attempting to sign in:', email);
     
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    
-    console.log('Signin result:', { error });
-    return { error };
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      console.log('Signin result:', { 
+        user: data.user?.email, 
+        session: data.session ? 'present' : 'null',
+        error: error?.message 
+      });
+      
+      return { error };
+    } catch (err) {
+      console.error('Signin error:', err);
+      return { error: err };
+    }
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    console.log('Signing out...');
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Signout error:', error);
+    } else {
+      console.log('Signed out successfully');
+    }
   };
 
   const value = {

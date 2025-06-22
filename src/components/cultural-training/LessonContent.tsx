@@ -376,6 +376,134 @@ export const getLessonContent = (lessonId: number, step: number) => {
           </div>
         )
       }
+    },
+    5: { // Business Culture and Professional Etiquette lesson
+      0: {
+        title: "Introduction to Business Culture",
+        content: (
+          <div className="space-y-4">
+            <p className="text-gray-700">
+              Ghana's business culture blends traditional values with modern practices, emphasizing relationships, respect, and professionalism.
+            </p>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <h4 className="font-semibold text-blue-800">Business Hours</h4>
+                <ul className="text-sm text-blue-700 mt-2 space-y-1">
+                  <li>• Monday-Friday: 8:00 AM - 5:00 PM</li>
+                  <li>• Some offices: 8:30 AM - 4:30 PM</li>
+                  <li>• Banks: 8:30 AM - 4:00 PM</li>
+                  <li>• Government offices: 8:00 AM - 5:00 PM</li>
+                  <li>• Lunch break: 12:00 PM - 1:00 PM</li>
+                </ul>
+              </div>
+              <div className="p-4 bg-green-50 rounded-lg">
+                <h4 className="font-semibold text-green-800">Key Values</h4>
+                <ul className="text-sm text-green-700 mt-2 space-y-1">
+                  <li>• Relationship-building is crucial</li>
+                  <li>• Respect for hierarchy and age</li>
+                  <li>• Patience and diplomacy</li>
+                  <li>• Personal connections matter</li>
+                  <li>• Trust and reliability are essential</li>
+                </ul>
+              </div>
+            </div>
+            <div className="mt-4 p-4 bg-yellow-50 rounded-lg">
+              <h4 className="font-semibold text-yellow-800 mb-2">First Impressions</h4>
+              <p className="text-sm text-yellow-700">
+                Ghanaians value punctuality, proper dress, and respectful behavior. Take time to build personal relationships before discussing business matters. A warm greeting and inquiry about family shows cultural awareness and respect.
+              </p>
+            </div>
+          </div>
+        )
+      },
+      1: {
+        title: "Professional Communication",
+        content: (
+          <div className="space-y-4">
+            <p className="text-gray-700">Effective communication in Ghanaian business settings requires cultural sensitivity and professionalism:</p>
+            <div className="space-y-3">
+              <div className="p-4 bg-purple-50 rounded-lg">
+                <h4 className="font-semibold text-purple-800">Verbal Communication</h4>
+                <ul className="text-sm text-purple-700 space-y-1">
+                  <li>• Speak clearly and at moderate pace</li>
+                  <li>• Use formal titles (Mr., Mrs., Dr.)</li>
+                  <li>• Allow others to finish speaking</li>
+                  <li>• Avoid direct confrontation</li>
+                  <li>• Use diplomatic language</li>
+                </ul>
+              </div>
+              <div className="p-4 bg-orange-50 rounded-lg">
+                <h4 className="font-semibold text-orange-800">Written Communication</h4>
+                <ul className="text-sm text-orange-700 space-y-1">
+                  <li>• Formal business letter format</li>
+                  <li>• Include proper salutations</li>
+                  <li>• Be clear and concise</li>
+                  <li>• Use professional email signatures</li>
+                  <li>• Follow up important conversations in writing</li>
+                </ul>
+              </div>
+              <div className="p-4 bg-green-50 rounded-lg">
+                <h4 className="font-semibold text-green-800">Non-Verbal Communication</h4>
+                <ul className="text-sm text-green-700 space-y-1">
+                  <li>• Maintain appropriate eye contact</li>
+                  <li>• Use both hands when exchanging business cards</li>
+                  <li>• Stand when greeting senior colleagues</li>
+                  <li>• Dress professionally and conservatively</li>
+                  <li>• Show respect through body language</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )
+      },
+      2: {
+        title: "Meeting Etiquette and Networking",
+        content: (
+          <div className="space-y-4">
+            <p className="text-gray-700">Successful business meetings and networking in Ghana follow specific cultural protocols:</p>
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg mb-4">
+              <h4 className="font-semibold text-blue-800 mb-3">Meeting Protocol</h4>
+              <div className="grid md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <strong>Before the Meeting:</strong>
+                  <ul className="mt-1 space-y-1">
+                    <li>• Schedule meetings in advance</li>
+                    <li>• Confirm attendance 24 hours prior</li>
+                    <li>• Prepare agenda and materials</li>
+                    <li>• Arrive 5-10 minutes early</li>
+                  </ul>
+                </div>
+                <div>
+                  <strong>During the Meeting:</strong>
+                  <ul className="mt-1 space-y-1">
+                    <li>• Greet everyone individually</li>
+                    <li>• Wait to be seated</li>
+                    <li>• Let senior members speak first</li>
+                    <li>• Take notes to show engagement</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className="p-4 bg-green-50 rounded-lg">
+              <h4 className="font-semibold text-green-800 mb-2">Networking Tips</h4>
+              <ul className="text-sm text-green-700 space-y-1">
+                <li>• Join professional associations and chambers of commerce</li>
+                <li>• Attend industry events and conferences</li>
+                <li>• Build relationships through social activities</li>
+                <li>• Exchange contact information professionally</li>
+                <li>• Follow up within 48 hours of meeting</li>
+                <li>• Maintain long-term professional relationships</li>
+              </ul>
+            </div>
+            <div className="mt-4 p-4 bg-yellow-50 rounded-lg">
+              <h4 className="font-semibold text-yellow-800 mb-2">Gift-Giving Etiquette</h4>
+              <p className="text-sm text-yellow-700">
+                Small gifts from your home country are appreciated but not expected. Avoid expensive gifts which may be seen as inappropriate. When receiving gifts, accept graciously with both hands and express genuine gratitude.
+              </p>
+            </div>
+          </div>
+        )
+      }
     }
   };
 

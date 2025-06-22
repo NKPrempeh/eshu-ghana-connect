@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface LessonContentProps {
@@ -99,6 +98,46 @@ export const getLessonContent = (lessonId: number, step: number) => {
             </div>
           </div>
         )
+      },
+      3: {
+        title: "Regional Language Variations",
+        content: (
+          <div className="space-y-4">
+            <p className="text-gray-700">Understanding how language use varies across Ghana:</p>
+            <div className="space-y-3">
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <h4 className="font-semibold text-blue-800">Northern Regions</h4>
+                <p className="text-sm text-blue-700">Dagbani, Hausa, and other northern languages are common. English is widely used for business.</p>
+              </div>
+              <div className="p-4 bg-green-50 rounded-lg">
+                <h4 className="font-semibold text-green-800">Ashanti Region</h4>
+                <p className="text-sm text-green-700">Twi is the dominant local language. Learning basic Twi will be very helpful here.</p>
+              </div>
+              <div className="p-4 bg-yellow-50 rounded-lg">
+                <h4 className="font-semibold text-yellow-800">Greater Accra</h4>
+                <p className="text-sm text-yellow-700">Ga and English are most common. Very cosmopolitan with many languages spoken.</p>
+              </div>
+            </div>
+          </div>
+        )
+      },
+      4: {
+        title: "Language Learning Resources",
+        content: (
+          <div className="space-y-4">
+            <p className="text-gray-700">Resources to help you learn local languages:</p>
+            <div className="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg">
+              <h4 className="font-semibold text-purple-800 mb-3">Learning Resources</h4>
+              <ul className="space-y-2 text-sm text-purple-700">
+                <li>• <strong>Language exchange groups:</strong> Join local conversation clubs</li>
+                <li>• <strong>Mobile apps:</strong> Nemo Twi, 50 Languages</li>
+                <li>• <strong>Local classes:</strong> Alliance Française, Goethe Institut</li>
+                <li>• <strong>Practice with locals:</strong> Most Ghanaians love to teach their language</li>
+                <li>• <strong>Media consumption:</strong> Watch local TV, listen to radio</li>
+              </ul>
+            </div>
+          </div>
+        )
       }
     },
     2: { // Food lesson
@@ -185,6 +224,61 @@ export const getLessonContent = (lessonId: number, step: number) => {
                   <li>• Kejetia Market - Modern shopping experience</li>
                 </ul>
               </div>
+            </div>
+          </div>
+        )
+      },
+      3: {
+        title: "Cooking at Home",
+        content: (
+          <div className="space-y-4">
+            <p className="text-gray-700">Essential ingredients and cooking tips for Ghanaian cuisine:</p>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="p-4 bg-red-50 rounded-lg">
+                <h4 className="font-semibold text-red-800">Essential Ingredients</h4>
+                <ul className="text-sm text-red-700 space-y-1">
+                  <li>• Palm oil and groundnut oil</li>
+                  <li>• Tomatoes, onions, ginger, garlic</li>
+                  <li>• Scotch bonnet peppers</li>
+                  <li>• Dawadawa (fermented locust beans)</li>
+                  <li>• Shito (black pepper sauce)</li>
+                </ul>
+              </div>
+              <div className="p-4 bg-green-50 rounded-lg">
+                <h4 className="font-semibold text-green-800">Cooking Tips</h4>
+                <ul className="text-sm text-green-700 space-y-1">
+                  <li>• Start with simple recipes like rice and stew</li>
+                  <li>• Ask locals for family recipes</li>
+                  <li>• Join cooking classes</li>
+                  <li>• Practice making basic tomato base</li>
+                  <li>• Learn to pound fufu gradually</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )
+      },
+      4: {
+        title: "Food Safety and Health",
+        content: (
+          <div className="space-y-4">
+            <p className="text-gray-700">Important considerations for eating safely in Ghana:</p>
+            <div className="bg-blue-50 p-6 rounded-lg">
+              <h4 className="font-semibold text-blue-800 mb-3">Food Safety Tips</h4>
+              <ul className="space-y-2 text-sm text-blue-700">
+                <li>• <strong>Water:</strong> Drink bottled or properly filtered water</li>
+                <li>• <strong>Street food:</strong> Choose busy vendors with high turnover</li>
+                <li>• <strong>Fruits:</strong> Peel fruits yourself or wash thoroughly</li>
+                <li>• <strong>Meat:</strong> Ensure meat is well-cooked and hot</li>
+                <li>• <strong>Dairy:</strong> Be cautious with unpasteurized dairy products</li>
+              </ul>
+            </div>
+            <div className="mt-4 p-4 bg-green-50 rounded-lg">
+              <h4 className="font-semibold text-green-800">Health Benefits</h4>
+              <p className="text-sm text-green-700">
+                Ghanaian cuisine is naturally healthy with lots of vegetables, lean proteins, and minimal processed foods. 
+                The abundant use of ginger, garlic, and peppers provides natural health benefits.
+              </p>
             </div>
           </div>
         )
@@ -287,6 +381,61 @@ export const getLessonContent = (lessonId: number, step: number) => {
             </div>
           </div>
         )
+      },
+      3: {
+        title: "Learning Music and Dance",
+        content: (
+          <div className="space-y-4">
+            <p className="text-gray-700">How to get involved in Ghana's music scene:</p>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="p-4 bg-purple-50 rounded-lg">
+                <h4 className="font-semibold text-purple-800">Learning Opportunities</h4>
+                <ul className="text-sm text-purple-700 space-y-1">
+                  <li>• Music schools and academies</li>
+                  <li>• Traditional drumming classes</li>
+                  <li>• Dance studios and cultural centers</li>
+                  <li>• University of Ghana Music Department</li>
+                  <li>• Community cultural groups</li>
+                </ul>
+              </div>
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <h4 className="font-semibold text-blue-800">Popular Venues</h4>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li>• National Theatre (Accra)</li>
+                  <li>• +233 Jazz Bar & Grill</li>
+                  <li>• Alliance Française</li>
+                  <li>• Local cultural centers</li>
+                  <li>• Festival grounds during events</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )
+      },
+      4: {
+        title: "Festivals and Music Events",
+        content: (
+          <div className="space-y-4">
+            <p className="text-gray-700">Major music festivals and cultural events to experience:</p>
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg">
+              <h4 className="font-semibold text-green-800 mb-3">Annual Music Festivals</h4>
+              <div className="space-y-3 text-sm">
+                <div>
+                  <strong>Afrochella (December):</strong> Contemporary music festival in Accra featuring Afrobeats, hip-hop, and alternative music
+                </div>
+                <div>
+                  <strong>Ghana Music Awards (Annual):</strong> Biggest music awards ceremony celebrating local and international artists
+                </div>
+                <div>
+                  <strong>Homowo Festival (August):</strong> Ga traditional festival with lots of music and dance
+                </div>
+                <div>
+                  <strong>Panafest (Every 2 years):</strong> Pan-African arts and culture festival with international participation
+                </div>
+              </div>
+            </div>
+          </div>
+        )
       }
     },
     4: { // Social Customs lesson
@@ -371,6 +520,62 @@ export const getLessonContent = (lessonId: number, step: number) => {
                 <li>• Many businesses close on Sundays</li>
                 <li>• Prayer before meals is common</li>
                 <li>• Religious festivals are major celebrations</li>
+              </ul>
+            </div>
+          </div>
+        )
+      },
+      3: {
+        title: "Social Events and Celebrations",
+        content: (
+          <div className="space-y-4">
+            <p className="text-gray-700">Understanding how Ghanaians celebrate and socialize:</p>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="p-4 bg-red-50 rounded-lg">
+                <h4 className="font-semibold text-red-800">Major Celebrations</h4>
+                <ul className="text-sm text-red-700 space-y-1">
+                  <li>• Weddings - Multi-day affairs with traditional and modern ceremonies</li>
+                  <li>• Funerals - Important celebrations of life, often lasting days</li>
+                  <li>• Naming ceremonies - Welcome new babies to the community</li>
+                  <li>• Traditional festivals - Annual cultural celebrations</li>
+                </ul>
+              </div>
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <h4 className="font-semibold text-blue-800">Social Expectations</h4>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li>• Contribute money at celebrations (dash)</li>
+                  <li>• Dress appropriately for each occasion</li>
+                  <li>• Participate in dancing and festivities</li>
+                  <li>• Show respect to organizers and elders</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )
+      },
+      4: {
+        title: "Gift-Giving and Hospitality",
+        content: (
+          <div className="space-y-4">
+            <p className="text-gray-700">Understanding Ghanaian hospitality and gift-giving customs:</p>
+            <div className="bg-yellow-50 p-6 rounded-lg">
+              <h4 className="font-semibold text-yellow-800 mb-3">Hospitality Culture</h4>
+              <ul className="space-y-2 text-sm text-yellow-700">
+                <li>• <strong>Welcoming nature:</strong> Ghanaians are known for their warm hospitality to visitors</li>
+                <li>• <strong>Food sharing:</strong> Guests are always offered food and drinks</li>
+                <li>• <strong>Home visits:</strong> Dropping by unannounced is normal and welcome</li>
+                <li>• <strong>Gift appreciation:</strong> Small gifts from your home country are cherished</li>
+                <li>• <strong>Reciprocity:</strong> Hospitality should be returned when possible</li>
+              </ul>
+            </div>
+            <div className="mt-4 p-4 bg-green-50 rounded-lg">
+              <h4 className="font-semibold text-green-800 mb-2">Gift-Giving Etiquette</h4>
+              <ul className="text-sm text-green-700 space-y-1">
+                <li>• Bring small gifts when visiting homes</li>
+                <li>• Gifts from your home country are especially appreciated</li>
+                <li>• Present gifts with both hands</li>
+                <li>• Don't expect gifts to be opened immediately</li>
+                <li>• Quality matters more than quantity</li>
               </ul>
             </div>
           </div>
@@ -500,6 +705,117 @@ export const getLessonContent = (lessonId: number, step: number) => {
               <p className="text-sm text-yellow-700">
                 Small gifts from your home country are appreciated but not expected. Avoid expensive gifts which may be seen as inappropriate. When receiving gifts, accept graciously with both hands and express genuine gratitude.
               </p>
+            </div>
+          </div>
+        )
+      }
+    },
+    6: { // Transportation and Getting Around
+      0: {
+        title: "Public Transportation Overview",
+        content: (
+          <div className="space-y-4">
+            <p className="text-gray-700">
+              Ghana has various transportation options, from traditional tro-tros to modern ride-sharing services. Understanding the system will help you navigate efficiently.
+            </p>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <h4 className="font-semibold text-blue-800">Popular Transport Options</h4>
+                <ul className="text-sm text-blue-700 mt-2 space-y-1">
+                  <li>• <strong>Tro-tro:</strong> Shared minibus, cheapest option</li>
+                  <li>• <strong>Taxi:</strong> Private cars, negotiate fare</li>
+                  <li>• <strong>Uber/Bolt:</strong> App-based rides in major cities</li>
+                  <li>• <strong>STC/VIP:</strong> Long-distance luxury buses</li>
+                  <li>• <strong>Metro Mass:</strong> Government buses</li>
+                </ul>
+              </div>
+              <div className="p-4 bg-green-50 rounded-lg">
+                <h4 className="font-semibold text-green-800">Safety Tips</h4>
+                <ul className="text-sm text-green-700 mt-2 space-y-1">
+                  <li>• Keep valuables secure</li>
+                  <li>• Travel during daylight when possible</li>
+                  <li>• Know your destination beforehand</li>
+                  <li>• Have small bills ready</li>
+                  <li>• Trust your instincts about safety</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )
+      },
+      1: {
+        title: "Using Tro-tros and Shared Transport",
+        content: (
+          <div className="space-y-4">
+            <p className="text-gray-700">Tro-tros are the backbone of Ghana's public transport system. Here's how to use them effectively:</p>
+            <div className="bg-yellow-50 p-6 rounded-lg">
+              <h4 className="font-semibold text-yellow-800 mb-3">Tro-tro Guide</h4>
+              <div className="grid md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <strong>How to Board:</strong>
+                  <ul className="mt-1 space-y-1">
+                    <li>• Find the station or roadside stop</li>
+                    <li>• Ask for your destination</li>
+                    <li>• Pay the mate (conductor)</li>
+                    <li>• Find a seat or stand if full</li>
+                  </ul>
+                </div>
+                <div>
+                  <strong>Etiquette:</strong>
+                  <ul className="mt-1 space-y-1">
+                    <li>• Give up seats for elders/pregnant women</li>
+                    <li>• Keep belongings on your lap</li>
+                    <li>• Signal when you want to get off</li>
+                    <li>• Be patient with delays</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+              <h4 className="font-semibold text-blue-800 mb-2">Common Routes</h4>
+              <ul className="text-sm text-blue-700 space-y-1">
+                <li>• Circle to Madina, Legon, Adenta</li>
+                <li>• Kaneshie to Kasoa, Weija</li>
+                <li>• Tema Station to Tema, Ashaiman</li>
+                <li>• Lapaz to Dome, Achimota</li>
+              </ul>
+            </div>
+          </div>
+        )
+      },
+      2: {
+        title: "Driving and Car Ownership",
+        content: (
+          <div className="space-y-4">
+            <p className="text-gray-700">If you plan to drive in Ghana, here's what you need to know:</p>
+            <div className="space-y-3">
+              <div className="p-4 bg-red-50 rounded-lg">
+                <h4 className="font-semibold text-red-800">Driving Requirements</h4>
+                <ul className="text-sm text-red-700 space-y-1">
+                  <li>• Valid international driving license</li>
+                  <li>• Vehicle registration and insurance</li>
+                  <li>• Understanding of local traffic rules</li>
+                  <li>• Patience for traffic congestion</li>
+                </ul>
+              </div>
+              <div className="p-4 bg-orange-50 rounded-lg">
+                <h4 className="font-semibold text-orange-800">Road Conditions</h4>
+                <ul className="text-sm text-orange-700 space-y-1">
+                  <li>• Main highways are generally good</li>
+                  <li>• City roads can be congested</li>
+                  <li>• Some rural roads are unpaved</li>
+                  <li>• Watch for potholes and speed bumps</li>
+                </ul>
+              </div>
+              <div className="p-4 bg-green-50 rounded-lg">
+                <h4 className="font-semibold text-green-800">Parking and Fuel</h4>
+                <ul className="text-sm text-green-700 space-y-1">
+                  <li>• Parking is often street-side</li>
+                  <li>• Use secured parking when possible</li>
+                  <li>• Fuel stations are widely available</li>
+                  <li>• Diesel and petrol are common</li>
+                </ul>
+              </div>
             </div>
           </div>
         )

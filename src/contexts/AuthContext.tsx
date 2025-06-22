@@ -27,15 +27,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Get the correct redirect URL based on environment
-  const getRedirectUrl = () => {
-    const isDevelopment = window.location.hostname === 'localhost';
-    if (isDevelopment) {
-      return `http://localhost:${window.location.port || '8080'}/`;
-    }
-    return `${window.location.origin}/`;
-  };
-
   useEffect(() => {
     console.log('Setting up auth state listener...');
     
@@ -50,12 +41,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Handle successful sign in (including after email confirmation)
         if (event === 'SIGNED_IN' && session) {
           console.log('User signed in successfully, redirecting...');
-          // Only redirect if we're on the login page to avoid disrupting user navigation
-          if (window.location.pathname === '/login') {
-            setTimeout(() => {
-              window.location.href = '/';
-            }, 100);
-          }
+          // Redirect to home page after successful login
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 100);
         }
         
         // Handle token refresh
@@ -81,24 +70,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string, userData?: any) => {
     console.log('Attempting signup for:', email);
-    const redirectUrl = getRedirectUrl();
-    console.log('Using redirect URL:', redirectUrl);
     
     try {
-      // For development, we'll disable email confirmation to make testing easier
-      const isDevelopment = window.location.hostname === 'localhost';
-      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: userData,
-          emailRedirectTo: redirectUrl,
-          // Skip email confirmation in development
-          ...(isDevelopment && { 
-            captchaToken: undefined,
-            emailRedirectTo: redirectUrl
-          })
+          emailRedirectTo: `${window.location.origin}/`
         }
       });
       
@@ -107,13 +86,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         session: data.session ? 'present' : 'null',
         error: error?.message 
       });
-      
-      // If signup was successful and we have a session, user is automatically signed in
-      if (data.session && data.user && !error) {
-        console.log('User signed up and automatically signed in');
-        setSession(data.session);
-        setUser(data.user);
-      }
       
       return { error };
     } catch (err) {

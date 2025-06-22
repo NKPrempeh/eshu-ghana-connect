@@ -17,7 +17,7 @@ interface GalleryItem {
 const galleryImages: GalleryItem[] = [
   {
     id: 1,
-    image: "https://images.unsplash.com/photo-1493962853295-0fd70327578a",
+    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96",
     title: "Kakum National Park",
     location: "Central Region",
     category: "Nature",
@@ -25,7 +25,7 @@ const galleryImages: GalleryItem[] = [
   },
   {
     id: 2,
-    image: "https://images.unsplash.com/photo-1466721591366-2d5fba72006d",
+    image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96",
     title: "Mole National Park",
     location: "Northern Region", 
     category: "Wildlife",
@@ -41,8 +41,8 @@ const galleryImages: GalleryItem[] = [
   },
   {
     id: 4,
-    image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
-    title: "Traditional Cuisine",
+    image: "https://images.unsplash.com/photo-1609501676725-7186f425b4ba",
+    title: "Ghanaian Jollof Rice",
     location: "Nationwide",
     category: "Food",
     description: "Experience authentic Ghanaian dishes and local ingredients"

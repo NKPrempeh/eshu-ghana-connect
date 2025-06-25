@@ -139,7 +139,7 @@ const BuddyDashboard = () => {
                   <span className="text-sm text-gray-600">Response Time</span>
                   <div className="flex items-center">
                     <Clock className="text-green-500 mr-1" size={16} />
-                    <span className="text-sm font-semibold">< 1 hour</span>
+                    <span className="text-sm font-semibold">&lt; 1 hour</span>
                   </div>
                 </div>
               </CardContent>
@@ -197,7 +197,7 @@ const BuddyDashboard = () => {
           <CardContent>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <h4 className="font-semibold mb-3 text-green-800">✅ Do's</h4>
+                <h4 className="font-semibold mb-3 text-green-800">✅ Do&apos;s</h4>
                 <ul className="space-y-2 text-sm text-gray-600">
                   <li>• Respond promptly to messages</li>
                   <li>• Share personal experiences and insights</li>
@@ -207,13 +207,13 @@ const BuddyDashboard = () => {
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold mb-3 text-red-800">❌ Don'ts</h4>
+                <h4 className="font-semibold mb-3 text-red-800">❌ Don&apos;ts</h4>
                 <ul className="space-y-2 text-sm text-gray-600">
-                  <li>• Don't share personal contact information</li>
+                  <li>• Don&apos;t share personal contact information</li>
                   <li>• Avoid making assumptions about backgrounds</li>
-                  <li>• Don't provide financial advice</li>
+                  <li>• Don&apos;t provide financial advice</li>
                   <li>• Avoid discussing sensitive political topics</li>
-                  <li>• Don't pressure for in-person meetings</li>
+                  <li>• Don&apos;t pressure for in-person meetings</li>
                 </ul>
               </div>
             </div>

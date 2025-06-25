@@ -1,12 +1,12 @@
 
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LogIn, CheckCircle } from "lucide-react";
+import { LogIn } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
@@ -17,30 +17,6 @@ const Login = () => {
   const { signIn, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-
-  // Check for email confirmation
-  useEffect(() => {
-    const error = searchParams.get('error');
-    const errorDescription = searchParams.get('error_description');
-    
-    if (error) {
-      toast({
-        title: "Authentication Error",
-        description: errorDescription || "There was an error with email confirmation",
-        variant: "destructive",
-      });
-    } else if (searchParams.has('type')) {
-      // Handle different auth events
-      const type = searchParams.get('type');
-      if (type === 'signup') {
-        toast({
-          title: "Email Confirmed!",
-          description: "Your email has been confirmed. You are now logged in!",
-        });
-      }
-    }
-  }, [searchParams, toast]);
 
   // Redirect if already logged in
   useEffect(() => {
@@ -127,22 +103,7 @@ const Login = () => {
                     Sign up here
                   </Link>
                 </div>
-                <div className="text-center">
-                  <Link to="/forgot-password" className="text-sm text-gray-600 hover:text-primary">
-                    Forgot your password?
-                  </Link>
-                </div>
               </form>
-              
-              {/* Email confirmation notice */}
-              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <div className="flex items-start space-x-2">
-                  <CheckCircle className="text-blue-500 mt-0.5" size={16} />
-                  <div className="text-sm text-blue-700">
-                    <strong>Email Confirmation:</strong> After signing up, check your email and click the confirmation link. You'll be automatically logged in and redirected to the home page.
-                  </div>
-                </div>
-              </div>
             </CardContent>
           </Card>
         </div>

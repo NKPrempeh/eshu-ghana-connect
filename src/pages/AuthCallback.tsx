@@ -11,6 +11,7 @@ const AuthCallback = () => {
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
+        // Get session after email confirmation
         const { data, error } = await supabase.auth.getSession();
         
         if (error) {
@@ -26,11 +27,37 @@ const AuthCallback = () => {
 
         if (data.session) {
           console.log('User authenticated successfully');
-          toast({
-            title: "Email Verified!",
-            description: "Your email has been confirmed. Welcome to Eshu!",
-          });
-          navigate('/?verified=true');
+          const user = data.session.user;
+          
+          // Check if user is a buddy
+          try {
+            const { data: buddyProfile } = await supabase
+              .from('buddy_profiles')
+              .select('id')
+              .eq('user_id', user.id)
+              .single();
+            
+            if (buddyProfile) {
+              toast({
+                title: "Email Verified!",
+                description: "Welcome to the Buddy Dashboard!",
+              });
+              navigate('/buddy-dashboard?verified=true');
+            } else {
+              toast({
+                title: "Email Verified!",
+                description: "Your email has been confirmed. Welcome to Eshu!",
+              });
+              navigate('/?verified=true');
+            }
+          } catch (buddyError) {
+            // If no buddy profile found, redirect to regular home
+            toast({
+              title: "Email Verified!",
+              description: "Your email has been confirmed. Welcome to Eshu!",
+            });
+            navigate('/?verified=true');
+          }
         } else {
           navigate('/login');
         }

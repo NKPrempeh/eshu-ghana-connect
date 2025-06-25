@@ -41,10 +41,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Handle successful sign in (including after email confirmation)
         if (event === 'SIGNED_IN' && session) {
           console.log('User signed in successfully');
-          // Show success animation and redirect
-          setTimeout(() => {
-            window.location.href = '/?verified=true';
-          }, 100);
+          
+          // Check if user has buddy profile to determine redirect
+          try {
+            const { data: buddyProfile } = await supabase
+              .from('buddy_profiles')
+              .select('id')
+              .eq('user_id', session.user.id)
+              .single();
+            
+            if (buddyProfile) {
+              // Redirect buddy users to buddy dashboard
+              setTimeout(() => {
+                window.location.href = '/buddy-dashboard?verified=true';
+              }, 100);
+            } else {
+              // Redirect regular users to home page
+              setTimeout(() => {
+                window.location.href = '/?verified=true';
+              }, 100);
+            }
+          } catch (error) {
+            // If no buddy profile found, redirect to home
+            setTimeout(() => {
+              window.location.href = '/?verified=true';
+            }, 100);
+          }
         }
         
         // Handle token refresh
@@ -72,8 +94,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     console.log('Attempting signup for:', email);
     
     try {
-      // Use explicit localhost URL for redirect
-      const redirectUrl = 'http://localhost:8080/auth/callback';
+      // Use explicit localhost URL for redirect - this is critical for email verification
+      const baseUrl = window.location.origin;
+      const redirectUrl = `${baseUrl}/auth/callback`;
       console.log('Using redirect URL:', redirectUrl);
       
       const { data, error } = await supabase.auth.signUp({

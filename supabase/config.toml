@@ -48,7 +48,16 @@ s3_enabled = false
 enabled = true
 port = 54328
 site_url = "http://localhost:8080"
-additional_redirect_urls = ["http://localhost:8080/", "http://localhost:8080/auth/callback", "http://127.0.0.1:8080", "http://127.0.0.1:8080/"]
+additional_redirect_urls = [
+  "http://localhost:8080/", 
+  "http://localhost:8080/auth/callback", 
+  "http://127.0.0.1:8080", 
+  "http://127.0.0.1:8080/",
+  "http://localhost:3000",
+  "http://localhost:3000/auth/callback",
+  "https://trendora-stylist-gh.lovable.app",
+  "https://trendora-stylist-gh.lovable.app/auth/callback"
+]
 jwt_expiry = 3600
 enable_signup = true
 enable_email_confirmations = true

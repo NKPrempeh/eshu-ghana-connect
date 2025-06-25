@@ -1,72 +1,62 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Navigation from "@/components/Navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MessageCircle, Users, Star, Clock, MapPin, Languages, Briefcase } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { Separator } from "@/components/ui/separator";
+import { MessageCircle, Users, BookOpen, Globe, Phone, Mail, Star, Clock } from "lucide-react";
 import { ChatWindow } from "@/components/buddy-system/ChatWindow";
 
 const BuddyDashboard = () => {
-  const { user } = useAuth();
-  const [activeConnections, setActiveConnections] = useState([
+  const [activeChat, setActiveChat] = useState<string | null>(null);
+
+  // Mock connections for demonstration
+  const connections = [
     {
-      id: 1,
-      name: "Sarah Johnson",
-      location: "New to Accra",
-      lastMessage: "Thanks for the restaurant recommendations!",
-      timestamp: "2 hours ago",
-      avatar: "https://images.unsplash.com/photo-1494790108755-2616b9191877?w=100",
+      id: "1",
+      name: "Kofi Asante",
+      location: "Accra, Ghana",
+      lastMessage: "Thanks for helping me with the cultural info!",
+      lastMessageTime: "2 min ago",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
       status: "online"
     },
     {
-      id: 2,
-      name: "Michael Chen",
-      location: "Visiting Kumasi",
-      lastMessage: "Can you help me with directions to the market?",
-      timestamp: "1 day ago",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100",
+      id: "2", 
+      name: "Ama Osei",
+      location: "Kumasi, Ghana",
+      lastMessage: "The food recommendations were perfect!",
+      lastMessageTime: "1 hour ago",
+      avatar: "https://images.unsplash.com/photo-1494790108755-2616c96f5dda?w=100&h=100&fit=crop&crop=face",
       status: "offline"
     }
-  ]);
+  ];
 
-  const [selectedChat, setSelectedChat] = useState<number | null>(null);
-
-  const buddyStats = {
-    totalConnections: 15,
-    activeChats: 3,
-    rating: 4.8,
-    responseTime: "< 1 hour"
-  };
-
-  const buddyTips = [
+  const resources = [
     {
-      title: "Cultural Sensitivity",
-      description: "Always be respectful of different cultures and traditions. Ask questions to understand better.",
-      icon: "🌍"
+      title: "Cultural Etiquette Guide",
+      description: "Essential dos and don'ts for Ghanaian culture",
+      icon: BookOpen,
+      color: "bg-blue-100 text-blue-800"
     },
     {
-      title: "Local Knowledge",
-      description: "Share practical information about transportation, food, customs, and local etiquette.",
-      icon: "📍"
+      title: "Local Transportation",
+      description: "Guide to taxis, trotros, and getting around",
+      icon: Globe,
+      color: "bg-green-100 text-green-800"
     },
     {
       title: "Emergency Contacts",
-      description: "Always provide emergency contact numbers and important local services information.",
-      icon: "🚨"
+      description: "Important numbers and contacts in Ghana",
+      icon: Phone,
+      color: "bg-red-100 text-red-800"
     },
     {
-      title: "Language Help",
-      description: "Assist with basic local language phrases and communication tips.",
-      icon: "💬"
-    },
-    {
-      title: "Safety First",
-      description: "Prioritize safety advice about areas, transportation, and general precautions.",
-      icon: "🛡️"
+      title: "Language Phrases",
+      description: "Common Twi and English phrases",
+      icon: MessageCircle,
+      color: "bg-purple-100 text-purple-800"
     }
   ];
 
@@ -75,183 +65,160 @@ const BuddyDashboard = () => {
       <Navigation />
       
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
+        <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Buddy Dashboard
           </h1>
           <p className="text-xl text-gray-600">
-            Help newcomers feel at home in Ghana
+            Help newcomers navigate Ghanaian culture with confidence
           </p>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Connections</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{buddyStats.totalConnections}</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Chats</CardTitle>
-              <MessageCircle className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{buddyStats.activeChats}</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Rating</CardTitle>
-              <Star className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{buddyStats.rating}</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Response Time</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{buddyStats.responseTime}</div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Tabs defaultValue="chats" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
-            <TabsTrigger value="chats">Active Chats</TabsTrigger>
-            <TabsTrigger value="tips">Buddy Tips</TabsTrigger>
-            <TabsTrigger value="resources">Resources</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="chats">
-            <div className="grid lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Your Connections</CardTitle>
-                  <CardDescription>People you're currently helping</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {activeConnections.map((connection) => (
-                    <div 
-                      key={connection.id}
-                      className="flex items-center space-x-4 p-3 rounded-lg border hover:bg-gray-50 cursor-pointer"
-                      onClick={() => setSelectedChat(connection.id)}
-                    >
-                      <Avatar>
-                        <AvatarImage src={connection.avatar} />
-                        <AvatarFallback>{connection.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                      </Avatar>
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Active Connections */}
+          <div className="lg:col-span-1">
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <Users className="mr-2" size={20} />
+                  Active Connections ({connections.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {connections.map((connection) => (
+                  <div
+                    key={connection.id}
+                    className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                      activeChat === connection.id 
+                        ? 'bg-primary/10 border-primary' 
+                        : 'hover:bg-gray-50'
+                    }`}
+                    onClick={() => setActiveChat(connection.id)}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="relative">
+                        <img
+                          src={connection.avatar}
+                          alt={connection.name}
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                        <div className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white ${
+                          connection.status === 'online' ? 'bg-green-500' : 'bg-gray-400'
+                        }`} />
+                      </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <p className="text-sm font-medium text-gray-900 truncate">
-                            {connection.name}
-                          </p>
-                          <Badge variant={connection.status === 'online' ? 'default' : 'secondary'}>
-                            {connection.status}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-gray-500 truncate">{connection.location}</p>
-                        <p className="text-xs text-gray-400 truncate">{connection.lastMessage}</p>
-                        <p className="text-xs text-gray-400">{connection.timestamp}</p>
+                        <h3 className="font-semibold text-sm truncate">{connection.name}</h3>
+                        <p className="text-xs text-gray-500">{connection.location}</p>
+                        <p className="text-xs text-gray-600 truncate mt-1">{connection.lastMessage}</p>
+                        <p className="text-xs text-gray-400">{connection.lastMessageTime}</p>
                       </div>
                     </div>
-                  ))}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Stats */}
+            <Card className="shadow-lg mt-6">
+              <CardHeader>
+                <CardTitle>Your Impact</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">People Helped</span>
+                  <Badge variant="secondary">12</Badge>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Average Rating</span>
+                  <div className="flex items-center">
+                    <Star className="text-yellow-500 mr-1" size={16} />
+                    <span className="text-sm font-semibold">4.8</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Response Time</span>
+                  <div className="flex items-center">
+                    <Clock className="text-green-500 mr-1" size={16} />
+                    <span className="text-sm font-semibold">< 1 hour</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Chat Area */}
+          <div className="lg:col-span-2">
+            {activeChat ? (
+              <ChatWindow 
+                buddyUserId={activeChat}
+                buddyName={connections.find(c => c.id === activeChat)?.name || "Unknown"}
+              />
+            ) : (
+              <Card className="shadow-lg h-full">
+                <CardContent className="flex items-center justify-center h-96">
+                  <div className="text-center">
+                    <MessageCircle className="mx-auto mb-4 text-gray-400" size={64} />
+                    <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                      Select a Connection to Start Chatting
+                    </h3>
+                    <p className="text-gray-500">
+                      Choose someone from your connections to begin helping them with their cultural journey.
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
+            )}
+          </div>
+        </div>
 
-              {selectedChat && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Chat</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ChatWindow 
-                      recipientId={selectedChat.toString()}
-                      recipientName={activeConnections.find(c => c.id === selectedChat)?.name || "User"}
-                    />
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </TabsContent>
+        {/* Resources Section */}
+        <div className="mt-12">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Resources for Buddies</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {resources.map((resource, index) => (
+              <Card key={index} className="shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+                <CardContent className="p-6">
+                  <div className={`w-12 h-12 rounded-lg ${resource.color} flex items-center justify-center mb-4`}>
+                    <resource.icon size={24} />
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2">{resource.title}</h3>
+                  <p className="text-gray-600 text-sm">{resource.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
 
-          <TabsContent value="tips">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {buddyTips.map((tip, index) => (
-                <Card key={index}>
-                  <CardHeader>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-2xl">{tip.icon}</span>
-                      <CardTitle className="text-lg">{tip.title}</CardTitle>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600">{tip.description}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="resources">
+        {/* Tips Section */}
+        <Card className="shadow-lg mt-8">
+          <CardHeader>
+            <CardTitle>Buddy Tips & Best Practices</CardTitle>
+          </CardHeader>
+          <CardContent>
             <div className="grid md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Emergency Contacts</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <div className="flex justify-between">
-                    <span>Police Emergency:</span>
-                    <span className="font-medium">199</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Fire Service:</span>
-                    <span className="font-medium">192</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Ambulance:</span>
-                    <span className="font-medium">193</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Tourist Police:</span>
-                    <span className="font-medium">18555</span>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Useful Information</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <div>
-                    <h4 className="font-medium">Common Greetings:</h4>
-                    <p className="text-sm text-gray-600">Twi: "Maakye" (Good morning), "Mema mo" (Good afternoon)</p>
-                  </div>
-                  <div>
-                    <h4 className="font-medium">Currency:</h4>
-                    <p className="text-sm text-gray-600">Ghana Cedi (GHS), Mobile Money widely accepted</p>
-                  </div>
-                  <div>
-                    <h4 className="font-medium">Transportation:</h4>
-                    <p className="text-sm text-gray-600">Trotro, Taxi, Uber, Bolt available in major cities</p>
-                  </div>
-                </CardContent>
-              </Card>
+              <div>
+                <h4 className="font-semibold mb-3 text-green-800">✅ Do's</h4>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li>• Respond promptly to messages</li>
+                  <li>• Share personal experiences and insights</li>
+                  <li>• Be patient with cultural differences</li>
+                  <li>• Recommend specific places and activities</li>
+                  <li>• Use simple, clear language</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-3 text-red-800">❌ Don'ts</h4>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li>• Don't share personal contact information</li>
+                  <li>• Avoid making assumptions about backgrounds</li>
+                  <li>• Don't provide financial advice</li>
+                  <li>• Avoid discussing sensitive political topics</li>
+                  <li>• Don't pressure for in-person meetings</li>
+                </ul>
+              </div>
             </div>
-          </TabsContent>
-        </Tabs>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

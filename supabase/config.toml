@@ -47,8 +47,8 @@ s3_enabled = false
 [auth]
 enabled = true
 port = 54328
-site_url = "http://127.0.0.1:3000"
-additional_redirect_urls = ["https://127.0.0.1:3000"]
+site_url = "http://localhost:8080"
+additional_redirect_urls = ["http://localhost:8080/", "http://127.0.0.1:8080", "http://127.0.0.1:8080/"]
 jwt_expiry = 3600
 enable_signup = true
 enable_email_confirmations = false
@@ -56,7 +56,7 @@ enable_sms_confirmations = false
 
 [auth.email]
 enable_signup = true
-double_confirm_changes = true
+double_confirm_changes = false
 enable_confirmations = false
 template_path = "./supabase/templates"
 

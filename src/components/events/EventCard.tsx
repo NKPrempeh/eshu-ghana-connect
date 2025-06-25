@@ -9,14 +9,15 @@ import { EventMap } from "./EventMap";
 interface Event {
   id: number;
   title: string;
-  description: string;
+  description?: string;
   location: string;
   date: string;
-  time: string;
-  category: string;
-  attendees: number;
-  image: string;
-  gallery: string[];
+  time?: string;
+  category?: string;
+  attendees?: number;
+  image?: string;
+  image_url?: string;
+  gallery?: string[];
 }
 
 interface EventCardProps {
@@ -27,7 +28,8 @@ export const EventCard = ({ event }: EventCardProps) => {
   const [showMap, setShowMap] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
 
-  const getCategoryColor = (category: string) => {
+  const getCategoryColor = (category?: string) => {
+    if (!category) return 'bg-gray-100 text-gray-800';
     switch (category.toLowerCase()) {
       case 'cultural': return 'bg-orange-100 text-orange-800';
       case 'festival': return 'bg-purple-100 text-purple-800';
@@ -37,18 +39,25 @@ export const EventCard = ({ event }: EventCardProps) => {
     }
   };
 
+  // Use image_url if available, fallback to image
+  const eventImage = event.image_url || event.image || 'https://images.unsplash.com/photo-1578662996442-48f60103fc96';
+  const eventDescription = event.description || 'Cultural event in Ghana';
+  const eventTime = event.time || '6:00 PM';
+  const eventCategory = event.category || 'Cultural';
+  const eventAttendees = event.attendees || 50;
+
   return (
     <>
       <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
         <div className="relative h-48 overflow-hidden">
           <img 
-            src={event.image} 
+            src={eventImage} 
             alt={event.title}
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
           />
           <div className="absolute top-2 right-2">
-            <Badge className={getCategoryColor(event.category)}>
-              {event.category}
+            <Badge className={getCategoryColor(eventCategory)}>
+              {eventCategory}
             </Badge>
           </div>
           {event.gallery && event.gallery.length > 0 && (
@@ -66,7 +75,7 @@ export const EventCard = ({ event }: EventCardProps) => {
         
         <CardHeader>
           <CardTitle className="text-xl">{event.title}</CardTitle>
-          <CardDescription>{event.description}</CardDescription>
+          <CardDescription>{eventDescription}</CardDescription>
         </CardHeader>
         
         <CardContent>
@@ -75,7 +84,7 @@ export const EventCard = ({ event }: EventCardProps) => {
               <Calendar size={16} />
               <span>{event.date}</span>
               <Clock size={16} className="ml-2" />
-              <span>{event.time}</span>
+              <span>{eventTime}</span>
             </div>
             
             <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -85,7 +94,7 @@ export const EventCard = ({ event }: EventCardProps) => {
             
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <Users size={16} />
-              <span>{event.attendees} attending</span>
+              <span>{eventAttendees} attending</span>
             </div>
             
             <div className="flex gap-2 pt-2">
@@ -111,7 +120,7 @@ export const EventCard = ({ event }: EventCardProps) => {
         />
       )}
 
-      {showGallery && (
+      {showGallery && event.gallery && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-w-4xl max-h-[90vh] overflow-hidden">
             <div className="p-4 border-b flex items-center justify-between">

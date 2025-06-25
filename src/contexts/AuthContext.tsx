@@ -40,11 +40,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         // Handle successful sign in (including after email confirmation)
         if (event === 'SIGNED_IN' && session) {
-          console.log('User signed in successfully, redirecting...');
-          // Redirect to home page after successful login
-          setTimeout(() => {
-            window.location.href = '/';
-          }, 100);
+          console.log('User signed in successfully, checking if from email confirmation...');
+          // Check if this is from email confirmation by looking at the URL
+          const urlParams = new URLSearchParams(window.location.search);
+          const isFromEmailConfirmation = urlParams.has('type') && urlParams.get('type') === 'signup';
+          
+          if (isFromEmailConfirmation) {
+            // Clear the URL parameters and redirect to home with success state
+            window.history.replaceState({}, document.title, '/');
+            // Add a small delay to show success animation
+            setTimeout(() => {
+              window.location.href = '/?verified=true';
+            }, 100);
+          }
         }
         
         // Handle token refresh
@@ -72,12 +80,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     console.log('Attempting signup for:', email);
     
     try {
+      // Use the current window location origin for redirect
+      const redirectUrl = `${window.location.protocol}//${window.location.host}/`;
+      console.log('Using redirect URL:', redirectUrl);
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: userData,
-          emailRedirectTo: `${window.location.origin}/`
+          emailRedirectTo: redirectUrl
         }
       });
       

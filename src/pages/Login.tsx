@@ -21,6 +21,7 @@ const Login = () => {
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
+      console.log('User is already logged in, redirecting to home');
       navigate("/");
     }
   }, [user, navigate]);
@@ -29,21 +30,32 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
 
+    console.log('Attempting login with:', email);
     const { error } = await signIn(email, password);
 
     if (error) {
       console.error('Login error:', error);
+      
+      let errorMessage = "Login failed. Please check your credentials.";
+      
+      if (error.message.includes('Invalid login credentials')) {
+        errorMessage = "Invalid email or password. Please try again or sign up if you don't have an account.";
+      } else if (error.message.includes('Email not confirmed')) {
+        errorMessage = "Please check your email and confirm your account.";
+      }
+      
       toast({
-        title: "Error",
-        description: error.message,
+        title: "Login Error",
+        description: errorMessage,
         variant: "destructive",
       });
     } else {
+      console.log('Login successful');
       toast({
         title: "Welcome back!",
         description: "You have successfully signed in.",
       });
-      navigate("/");
+      // Navigation will happen automatically via useEffect when user state updates
     }
     setLoading(false);
   };

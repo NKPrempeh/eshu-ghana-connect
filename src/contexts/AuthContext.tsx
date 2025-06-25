@@ -30,7 +30,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     console.log('Setting up auth state listener...');
     
-    // Set up auth state listener first
+    // Get initial session first
+    const getInitialSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error('Error getting initial session:', error);
+        }
+        console.log('Initial session:', session?.user?.email || 'No session');
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error in getInitialSession:', err);
+        setLoading(false);
+      }
+    };
+
+    getInitialSession();
+
+    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth event:', event, 'Session:', session?.user?.email || 'null');
@@ -39,17 +58,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLoading(false);
       }
     );
-
-    // Then get initial session
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (error) {
-        console.error('Error getting session:', error);
-      }
-      console.log('Initial session check:', session?.user?.email || 'No session');
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
 
     return () => subscription.unsubscribe();
   }, []);
@@ -62,8 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email,
         password,
         options: {
-          data: userData,
-          emailRedirectTo: undefined // No email confirmation needed
+          data: userData
         }
       });
       
@@ -72,6 +79,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         session: data.session ? 'present' : 'null',
         error: error?.message 
       });
+      
+      // If signup is successful and we get a session, the user is immediately logged in
+      if (data.session && data.user) {
+        console.log('User signed up and logged in immediately');
+      }
       
       return { error };
     } catch (err) {

@@ -22,14 +22,10 @@ const Signup = () => {
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
-      toast({
-        title: "Welcome to Eshu!",
-        description: "Your account has been created successfully and you are now logged in.",
-        duration: 3000,
-      });
+      console.log('User is logged in, redirecting to home');
       navigate("/");
     }
-  }, [user, navigate, toast]);
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,6 +36,7 @@ const Signup = () => {
     });
 
     if (error) {
+      console.error('Signup error:', error);
       if (error.message.includes('already registered')) {
         toast({
           title: "Account exists",
@@ -55,10 +52,11 @@ const Signup = () => {
       }
     } else {
       toast({
-        title: "Welcome to Eshu!",
-        description: "Your account has been created successfully and you are now logged in.",
+        title: "Account created successfully!",
+        description: "You are now logged in and can use all features.",
         duration: 3000,
       });
+      // Navigation will happen automatically via useEffect when user state updates
     }
     setLoading(false);
   };
@@ -110,10 +108,11 @@ const Signup = () => {
                   <Input 
                     id="password" 
                     type="password" 
-                    placeholder="Create a password"
+                    placeholder="Create a password (min 6 characters)"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    minLength={6}
                     className="w-full"
                   />
                 </div>
@@ -132,12 +131,12 @@ const Signup = () => {
                 </div>
               </form>
               
-              {/* Simple verification notice */}
+              {/* Instant access notice */}
               <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                 <div className="flex items-start space-x-2">
                   <CheckCircle className="text-green-500 mt-0.5" size={16} />
                   <div className="text-sm text-green-700">
-                    <strong>Instant Access:</strong> Your account will be created instantly and you'll be logged in immediately - no email confirmation needed!
+                    <strong>Instant Access:</strong> Your account will be created and you'll be logged in immediately!
                   </div>
                 </div>
               </div>

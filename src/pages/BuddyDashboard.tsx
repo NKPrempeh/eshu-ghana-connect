@@ -60,6 +60,26 @@ const BuddyDashboard = () => {
     }
   ];
 
+  // Convert connection to buddy profile format for ChatWindow
+  const getActiveBuddy = () => {
+    const connection = connections.find(c => c.id === activeChat);
+    if (!connection) return null;
+    
+    return {
+      id: connection.id,
+      user_id: connection.id,
+      name: connection.name,
+      location: connection.location,
+      bio: "Cultural buddy helping newcomers",
+      specialties: ["Culture", "Language", "Local Tips"],
+      languages: ["English", "Twi"],
+      avatar_url: connection.avatar,
+      rating: 4.8,
+      review_count: 12,
+      response_time: "< 1 hour"
+    };
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
       <Navigation />
@@ -148,10 +168,10 @@ const BuddyDashboard = () => {
 
           {/* Chat Area */}
           <div className="lg:col-span-2">
-            {activeChat ? (
+            {activeChat && getActiveBuddy() ? (
               <ChatWindow 
-                buddyUserId={activeChat}
-                buddyName={connections.find(c => c.id === activeChat)?.name || "Unknown"}
+                buddy={getActiveBuddy()!}
+                onClose={() => setActiveChat(null)}
               />
             ) : (
               <Card className="shadow-lg h-full">

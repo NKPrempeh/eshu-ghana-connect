@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
@@ -10,10 +9,12 @@ import { Badge } from "@/components/ui/badge";
 import { X, Upload, ImagePlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 const BuddySignup = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -132,6 +133,7 @@ const BuddySignup = () => {
             avatar_url: avatarUrl,
             specialties: formData.specialties,
             languages: formData.languages,
+            user_id: user?.id || null, // Set user_id if user is logged in
           }
         ]);
 

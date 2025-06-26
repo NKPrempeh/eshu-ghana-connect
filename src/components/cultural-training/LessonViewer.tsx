@@ -40,16 +40,16 @@ export const LessonViewer = ({ lesson, onComplete, onClose }: LessonViewerProps)
   };
 
   const scrollToTop = () => {
-    const scrollArea = document.querySelector('[data-radix-scroll-area-viewport]');
-    if (scrollArea) {
-      scrollArea.scrollTo({ top: 0, behavior: 'smooth' });
+    const viewport = document.querySelector('[data-radix-scroll-area-viewport]');
+    if (viewport) {
+      viewport.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const scrollToBottom = () => {
-    const scrollArea = document.querySelector('[data-radix-scroll-area-viewport]');
-    if (scrollArea) {
-      scrollArea.scrollTo({ top: scrollArea.scrollHeight, behavior: 'smooth' });
+    const viewport = document.querySelector('[data-radix-scroll-area-viewport]');
+    if (viewport) {
+      viewport.scrollTo({ top: viewport.scrollHeight, behavior: 'smooth' });
     }
   };
 
@@ -97,6 +97,7 @@ export const LessonViewer = ({ lesson, onComplete, onClose }: LessonViewerProps)
                     size="sm"
                     onClick={scrollToTop}
                     className="bg-white/90 hover:bg-white shadow-lg"
+                    title="Scroll to top"
                   >
                     <ChevronUp size={16} />
                   </Button>
@@ -105,6 +106,7 @@ export const LessonViewer = ({ lesson, onComplete, onClose }: LessonViewerProps)
                     size="sm"
                     onClick={scrollToBottom}
                     className="bg-white/90 hover:bg-white shadow-lg"
+                    title="Scroll to bottom"
                   >
                     <ChevronDown size={16} />
                   </Button>

@@ -7,98 +7,19 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MessageCircle, CheckCircle, Clock, MapPin, User, Calendar } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
-
-interface BuddyRequest {
-  id: string;
-  user_id: string;
-  user_name: string;
-  user_avatar: string;
-  user_location: string;
-  message: string;
-  interests: string[];
-  arrival_date: string;
-  duration_of_stay: string;
-  status: 'pending' | 'accepted' | 'declined';
-  created_at: string;
-}
+import { useBuddyRequests } from "@/hooks/useBuddyRequests";
 
 const BuddyRequests = () => {
-  const [requests, setRequests] = useState<BuddyRequest[]>([
-    {
-      id: '1',
-      user_id: '1',
-      user_name: 'Sarah Johnson',
-      user_avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face',
-      user_location: 'United States',
-      message: 'Hi! I\'m traveling to Ghana for the first time next month and would love to learn about local customs and find the best places to experience authentic Ghanaian culture.',
-      interests: ['Culture', 'Food', 'Language', 'History'],
-      arrival_date: '2024-02-15',
-      duration_of_stay: '2 weeks',
-      status: 'pending',
-      created_at: '2024-01-20T10:30:00Z'
-    },
-    {
-      id: '2',
-      user_id: '2',
-      user_name: 'Michael Chen',
-      user_avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face',
-      user_location: 'Canada',
-      message: 'I\'m a student coming to Ghana for a semester abroad. I\'d appreciate help with understanding academic culture and social norms.',
-      interests: ['Education', 'Culture', 'Language'],
-      arrival_date: '2024-02-01',
-      duration_of_stay: '4 months',
-      status: 'pending',
-      created_at: '2024-01-18T14:15:00Z'
-    },
-    {
-      id: '3',
-      user_id: '3',
-      user_name: 'Emma Thompson',
-      user_avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face',
-      user_location: 'United Kingdom',
-      message: 'Thank you for accepting my request! Looking forward to learning about Ghana.',
-      interests: ['Culture', 'Tourism', 'Photography'],
-      arrival_date: '2024-01-25',
-      duration_of_stay: '3 weeks',
-      status: 'accepted',
-      created_at: '2024-01-15T09:20:00Z'
-    }
-  ]);
-  
-  const { user } = useAuth();
-  const { toast } = useToast();
+  const { 
+    requests, 
+    loading, 
+    handleAcceptRequest, 
+    handleDeclineRequest 
+  } = useBuddyRequests();
 
   const pendingRequests = requests.filter(req => req.status === 'pending');
   const acceptedRequests = requests.filter(req => req.status === 'accepted');
   const allRequests = requests;
-
-  const handleAcceptRequest = async (requestId: string) => {
-    setRequests(prev => 
-      prev.map(req => 
-        req.id === requestId ? { ...req, status: 'accepted' as const } : req
-      )
-    );
-    
-    toast({
-      title: "Request Accepted",
-      description: "You can now start chatting with your new buddy!",
-    });
-  };
-
-  const handleDeclineRequest = async (requestId: string) => {
-    setRequests(prev => 
-      prev.map(req => 
-        req.id === requestId ? { ...req, status: 'declined' as const } : req
-      )
-    );
-    
-    toast({
-      title: "Request Declined",
-      description: "The request has been declined.",
-    });
-  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -119,14 +40,14 @@ const BuddyRequests = () => {
     return `${diffDays} days ago`;
   };
 
-  const RequestCard = ({ request }: { request: BuddyRequest }) => (
+  const RequestCard = ({ request }: { request: any }) => (
     <Card className="shadow-sm hover:shadow-md transition-shadow">
       <CardContent className="p-6">
         <div className="flex items-start gap-4">
           <Avatar className="w-12 h-12">
             <AvatarImage src={request.user_avatar} alt={request.user_name} />
             <AvatarFallback>
-              {request.user_name.split(' ').map(n => n[0]).join('')}
+              {request.user_name.split(' ').map((n: string) => n[0]).join('')}
             </AvatarFallback>
           </Avatar>
           
@@ -150,7 +71,7 @@ const BuddyRequests = () => {
                   {request.status}
                 </Badge>
                 <p className="text-xs text-gray-500 mt-1">
-                  {formatTimeAgo(request.created_at)}
+                  {formatTimeAgo(request.requested_at)}
                 </p>
               </div>
             </div>
@@ -158,35 +79,6 @@ const BuddyRequests = () => {
             <p className="text-gray-700 mb-4 leading-relaxed">
               {request.message}
             </p>
-            
-            <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-              <div className="flex items-center gap-2">
-                <Calendar size={16} className="text-primary" />
-                <div>
-                  <p className="font-medium">Arrival Date</p>
-                  <p className="text-gray-600">{formatDate(request.arrival_date)}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <Clock size={16} className="text-primary" />
-                <div>
-                  <p className="font-medium">Duration</p>
-                  <p className="text-gray-600">{request.duration_of_stay}</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="mb-4">
-              <p className="font-medium text-sm mb-2">Interests:</p>
-              <div className="flex flex-wrap gap-2">
-                {request.interests.map(interest => (
-                  <Badge key={interest} variant="outline" className="text-xs">
-                    {interest}
-                  </Badge>
-                ))}
-              </div>
-            </div>
             
             {request.status === 'pending' && (
               <div className="flex gap-3">
@@ -208,16 +100,26 @@ const BuddyRequests = () => {
             )}
             
             {request.status === 'accepted' && (
-              <Button className="w-full ghana-gradient">
-                <MessageCircle size={16} className="mr-2" />
-                Start Chatting
-              </Button>
+              <div className="text-sm text-green-600 font-medium">
+                ✓ Connection established - You can now chat with this user
+              </div>
             )}
           </div>
         </div>
       </CardContent>
     </Card>
   );
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
+        <Navigation />
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center">Loading requests...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
@@ -317,40 +219,23 @@ const BuddyRequests = () => {
           </TabsContent>
 
           <TabsContent value="all" className="space-y-4">
-            {allRequests.map(request => (
-              <RequestCard key={request.id} request={request} />
-            ))}
+            {allRequests.length === 0 ? (
+              <Card className="text-center py-12">
+                <CardContent>
+                  <User size={48} className="mx-auto text-gray-400 mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">No Requests Yet</h3>
+                  <p className="text-gray-600">
+                    Connection requests will appear here once users start reaching out.
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              allRequests.map(request => (
+                <RequestCard key={request.id} request={request} />
+              ))
+            )}
           </TabsContent>
         </Tabs>
-
-        {/* Help Section */}
-        <Card className="shadow-lg mt-8">
-          <CardHeader>
-            <CardTitle>Managing Requests</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-semibold mb-3 text-green-800">✅ Acceptance Tips</h4>
-                <ul className="space-y-2 text-sm text-gray-600">
-                  <li>• Review their interests and message carefully</li>
-                  <li>• Consider your availability during their stay</li>
-                  <li>• Accept requests where you can genuinely help</li>
-                  <li>• Respond promptly to show professionalism</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-3 text-blue-800">💬 Communication Guidelines</h4>
-                <ul className="space-y-2 text-sm text-gray-600">
-                  <li>• Send a welcome message after accepting</li>
-                  <li>• Ask about specific needs and concerns</li>
-                  <li>• Share useful resources and tips</li>
-                  <li>• Be patient and understanding</li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

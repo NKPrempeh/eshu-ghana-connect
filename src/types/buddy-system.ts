@@ -25,4 +25,7 @@ export interface Connection {
   id: string;
   buddy_id: string;
   status: string;
+  message?: string;
+  requested_at: string;
+  created_at?: string;
 }

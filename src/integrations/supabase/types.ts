@@ -68,6 +68,8 @@ export type Database = {
           buddy_id: string | null
           created_at: string | null
           id: string
+          message: string | null
+          requested_at: string | null
           status: string
           user_id: string | null
         }
@@ -75,6 +77,8 @@ export type Database = {
           buddy_id?: string | null
           created_at?: string | null
           id?: string
+          message?: string | null
+          requested_at?: string | null
           status?: string
           user_id?: string | null
         }
@@ -82,6 +86,8 @@ export type Database = {
           buddy_id?: string | null
           created_at?: string | null
           id?: string
+          message?: string | null
+          requested_at?: string | null
           status?: string
           user_id?: string | null
         }

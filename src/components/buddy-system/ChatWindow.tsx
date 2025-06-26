@@ -33,9 +33,13 @@ export const ChatWindow = ({ buddy, onClose }: ChatWindowProps) => {
   const handleSendMessage = async () => {
     if (!newMessage.trim()) return;
 
+    console.log('Attempting to send message:', newMessage);
     const success = await sendMessage(newMessage);
     if (success) {
       setNewMessage("");
+      console.log('Message sent successfully');
+    } else {
+      console.error('Failed to send message');
     }
   };
 
@@ -147,8 +151,8 @@ export const ChatWindow = ({ buddy, onClose }: ChatWindowProps) => {
                         <div
                           className={`max-w-[80%] rounded-lg px-3 py-2 ${
                             message.sender_id === user?.id
-                              ? 'bg-primary text-white'
-                              : 'bg-gray-100 text-gray-900'
+                              ? 'bg-orange-500 text-white ml-4'
+                              : 'bg-white text-gray-900 border border-gray-200 mr-4'
                           }`}
                         >
                           <p className="text-sm whitespace-pre-wrap">{message.content}</p>

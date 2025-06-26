@@ -29,6 +29,8 @@ export const useRealtimeChat = (buddyUserId: string) => {
     if (!user) return;
 
     try {
+      console.log('Fetching messages for conversation between:', user.id, 'and', buddyUserId);
+      
       const { data, error } = await supabase
         .from('messages')
         .select('*')
@@ -51,7 +53,7 @@ export const useRealtimeChat = (buddyUserId: string) => {
           sent_at: msg.sent_at
         }));
         setMessages(convertedMessages);
-        console.log('Fetched messages:', convertedMessages);
+        console.log('Fetched messages:', convertedMessages.length, 'messages');
       }
     } catch (error) {
       console.error('Error fetching messages:', error);
@@ -94,7 +96,10 @@ export const useRealtimeChat = (buddyUserId: string) => {
             // Only add message if it's not already in the list (prevent duplicates)
             setMessages(prev => {
               const exists = prev.some(msg => msg.id === newMessage.id);
-              if (exists) return prev;
+              if (exists) {
+                console.log('Message already exists, skipping');
+                return prev;
+              }
               console.log('Adding new message to state:', newMessage);
               return [...prev, newMessage];
             });
@@ -112,13 +117,20 @@ export const useRealtimeChat = (buddyUserId: string) => {
   };
 
   const sendMessage = async (content: string) => {
-    if (!user || !content.trim()) return false;
+    if (!user || !content.trim()) {
+      console.log('Cannot send message: missing user or content');
+      return false;
+    }
 
     setLoading(true);
     try {
-      console.log('Sending message:', { content, sender_id: user.id, recipient_id: buddyUserId });
+      console.log('Sending message:', { 
+        content: content.trim(), 
+        sender_id: user.id, 
+        recipient_id: buddyUserId 
+      });
       
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('messages')
         .insert([
           {
@@ -126,7 +138,9 @@ export const useRealtimeChat = (buddyUserId: string) => {
             sender_id: user.id,
             recipient_id: buddyUserId
           }
-        ]);
+        ])
+        .select()
+        .single();
 
       if (error) {
         console.error('Error sending message:', error);
@@ -138,7 +152,25 @@ export const useRealtimeChat = (buddyUserId: string) => {
         return false;
       }
 
-      console.log('Message sent successfully');
+      console.log('Message sent successfully:', data);
+      
+      // Immediately add the message to local state for instant feedback
+      if (data) {
+        const newMessage: Message = {
+          id: data.id.toString(),
+          content: data.content,
+          sender_id: data.sender_id,
+          recipient_id: data.recipient_id,
+          sent_at: data.sent_at
+        };
+        
+        setMessages(prev => {
+          const exists = prev.some(msg => msg.id === newMessage.id);
+          if (exists) return prev;
+          return [...prev, newMessage];
+        });
+      }
+      
       return true;
     } catch (error) {
       console.error('Error sending message:', error);

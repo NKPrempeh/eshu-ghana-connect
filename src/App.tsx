@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,35 +15,43 @@ import Signup from "./pages/Signup";
 import EventsAndPlaces from "./pages/EventsAndPlaces";
 import AuthCallback from "./pages/AuthCallback";
 import NotFound from "./pages/NotFound";
+import BuddyAvailability from "@/pages/BuddyAvailability";
+import BuddyRequests from "@/pages/BuddyRequests";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/cultural-training" element={<CulturalTraining />} />
-            <Route path="/buddy-system" element={<BuddySystem />} />
-            <Route path="/buddy-signup" element={<BuddySignup />} />
-            <Route path="/buddy-dashboard" element={<BuddyDashboard />} />
-            <Route path="/information-board" element={<InformationBoard />} />
-            <Route path="/information" element={<InformationBoard />} />
-            <Route path="/events" element={<EventsAndPlaces />} />
-            <Route path="/events-places" element={<EventsAndPlaces />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/auth/callback" element={<AuthCallback />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <div className="min-h-screen bg-background">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/cultural-training" element={<CulturalTraining />} />
+                <Route path="/buddy-system" element={<BuddySystem />} />
+                <Route path="/buddy-signup" element={<BuddySignup />} />
+                <Route path="/buddy-dashboard" element={<BuddyDashboard />} />
+                <Route path="/information-board" element={<InformationBoard />} />
+                <Route path="/information" element={<InformationBoard />} />
+                <Route path="/events" element={<EventsAndPlaces />} />
+                <Route path="/events-places" element={<EventsAndPlaces />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route path="/buddy-availability" element={<BuddyAvailability />} />
+                <Route path="/buddy-requests" element={<BuddyRequests />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;

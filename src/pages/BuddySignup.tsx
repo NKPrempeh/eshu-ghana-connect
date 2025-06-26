@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
@@ -89,37 +88,14 @@ const BuddySignup = () => {
 
     const fileExt = avatarFile.name.split('.').pop();
     const fileName = `${Math.random()}.${fileExt}`;
-    const filePath = `avatars/${fileName}`;
+    const filePath = `${fileName}`;
 
     try {
-      // First, ensure the avatars bucket exists
-      const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
+      console.log('Uploading buddy avatar...');
       
-      if (bucketsError) {
-        console.error('Error listing buckets:', bucketsError);
-        throw bucketsError;
-      }
-
-      const avatarBucket = buckets?.find(bucket => bucket.name === 'avatars');
-      
-      if (!avatarBucket) {
-        console.log('Creating avatars bucket...');
-        const { error: createBucketError } = await supabase.storage.createBucket('avatars', { 
-          public: true,
-          allowedMimeTypes: ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp'],
-          fileSizeLimit: 5242880 // 5MB
-        });
-        
-        if (createBucketError) {
-          console.error('Error creating bucket:', createBucketError);
-          throw createBucketError;
-        }
-        console.log('Avatars bucket created successfully');
-      }
-
-      // Upload the file
+      // Upload to buddy-avatars bucket (created in migration)
       const { error: uploadError } = await supabase.storage
-        .from('avatars')
+        .from('buddy-avatars')
         .upload(filePath, avatarFile);
 
       if (uploadError) {
@@ -127,7 +103,8 @@ const BuddySignup = () => {
         throw uploadError;
       }
 
-      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+      const { data } = supabase.storage.from('buddy-avatars').getPublicUrl(filePath);
+      console.log('Buddy avatar uploaded successfully:', data.publicUrl);
       return data.publicUrl;
     } catch (error) {
       console.error('Error in uploadAvatar:', error);

@@ -78,42 +78,24 @@ const Profile = () => {
   const uploadAvatar = async (file: File) => {
     try {
       setUploading(true);
+      console.log('Starting avatar upload...');
 
       const fileExt = file.name.split('.').pop();
       const fileName = `${user?.id}-${Math.random()}.${fileExt}`;
-      const filePath = `avatars/${fileName}`;
+      const filePath = `${fileName}`;
 
-      // Ensure avatars bucket exists
-      const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
-      
-      if (bucketsError) {
-        throw bucketsError;
-      }
-
-      const avatarBucket = buckets?.find(bucket => bucket.name === 'avatars');
-      
-      if (!avatarBucket) {
-        const { error: createBucketError } = await supabase.storage.createBucket('avatars', { 
-          public: true,
-          allowedMimeTypes: ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp'],
-          fileSizeLimit: 5242880 // 5MB
-        });
-        
-        if (createBucketError) {
-          throw createBucketError;
-        }
-      }
-
-      // Upload the file
+      // Upload to user-avatars bucket (created in migration)
       const { error: uploadError } = await supabase.storage
-        .from('avatars')
+        .from('user-avatars')
         .upload(filePath, file);
 
       if (uploadError) {
+        console.error('Upload error:', uploadError);
         throw uploadError;
       }
 
-      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+      const { data } = supabase.storage.from('user-avatars').getPublicUrl(filePath);
+      console.log('Avatar uploaded successfully:', data.publicUrl);
       return data.publicUrl;
     } catch (error) {
       console.error('Error uploading avatar:', error);
@@ -136,6 +118,7 @@ const Profile = () => {
         description: "Don't forget to save your changes.",
       });
     } catch (error) {
+      console.error('Avatar upload failed:', error);
       toast({
         title: "Upload failed",
         description: "Failed to upload avatar. Please try again.",

@@ -11,6 +11,7 @@ const Navigation = () => {
   const { user, signOut, loading } = useAuth();
   const { isBuddy, loading: buddyLoading } = useBuddyRole();
 
+  // Regular user navigation items (original Eshu navigation)
   const userNavItems = [
     { to: "/", label: "Home", icon: Home },
     { to: "/cultural-training", label: "Cultural Training", icon: BookOpen },
@@ -19,18 +20,17 @@ const Navigation = () => {
     { to: "/information-board", label: "Information Board", icon: Info },
   ];
 
+  // Buddy-specific navigation items (Eshu Buddy navigation)
   const buddyNavItems = [
     { to: "/", label: "Home", icon: Home },
-    { to: "/buddy-resources", label: "Resources", icon: BookOpen },
-    { to: "/buddy-dashboard", label: "🏠 Dashboard", icon: Home },
-    { to: "/buddy-requests", label: "📍 Requests", icon: MapPin },
-    { to: "/buddy-availability", label: "📅 Availability", icon: Clock },
-    { to: "/buddy-messages", label: "📨 Messages", icon: MessageSquare },
-    { to: "/buddy-feedback", label: "📊 Feedback", icon: BarChart3 },
-    { to: "/buddy-profile", label: "👤 Profile", icon: User },
-    { to: "/buddy-settings", label: "⚙️ Settings", icon: Settings },
+    { to: "/buddy-dashboard", label: "Dashboard", icon: Home },
+    { to: "/buddy-requests", label: "Requests", icon: MapPin },
+    { to: "/buddy-availability", label: "Availability", icon: Clock },
+    { to: "/buddy-messages", label: "Messages", icon: MessageSquare },
+    { to: "/buddy-profile", label: "Profile", icon: User },
   ];
 
+  // Use buddy navigation only if user is a buddy, otherwise use regular navigation
   const navItems = isBuddy ? buddyNavItems : userNavItems;
 
   const NavLink = ({ to, label, icon: Icon, mobile = false }: any) => (
@@ -56,7 +56,7 @@ const Navigation = () => {
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 ghana-gradient rounded-full"></div>
-              <span className="text-xl font-bold text-primary">{isBuddy ? "Eshu Buddy" : "Eshu"}</span>
+              <span className="text-xl font-bold text-primary">Eshu</span>
             </Link>
             <div>Loading...</div>
           </div>
@@ -71,7 +71,9 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 ghana-gradient rounded-full"></div>
-            <span className="text-xl font-bold text-primary">{isBuddy ? "Eshu Buddy" : "Eshu"}</span>
+            <span className="text-xl font-bold text-primary">
+              {isBuddy ? "Eshu Buddy" : "Eshu"}
+            </span>
           </Link>
 
           {/* Desktop Navigation */}

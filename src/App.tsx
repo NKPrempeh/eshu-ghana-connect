@@ -7,6 +7,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import CulturalTraining from "./pages/CulturalTraining";
+import LessonDetail from "./pages/LessonDetail";
+import CulturalQuiz from "./pages/CulturalQuiz";
 import BuddySystem from "./pages/BuddySystem";
 import BuddySignup from "./pages/BuddySignup";
 import BuddyDashboard from "./pages/BuddyDashboard";
@@ -34,6 +36,8 @@ function App() {
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/cultural-training" element={<CulturalTraining />} />
+                <Route path="/cultural-training/lesson/:id" element={<LessonDetail />} />
+                <Route path="/cultural-training/quiz" element={<CulturalQuiz />} />
                 <Route path="/buddy-system" element={<BuddySystem />} />
                 <Route path="/buddy-signup" element={<BuddySignup />} />
                 <Route path="/buddy-dashboard" element={<BuddyDashboard />} />

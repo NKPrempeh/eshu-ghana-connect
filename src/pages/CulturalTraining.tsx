@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Users, Languages, Utensils, Music, MapPin } from "lucide-react";
+import { BookOpen, Users, Languages, Utensils, Music, MapPin, Quiz, Trophy, ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { LessonCard } from "@/components/cultural-training/LessonCard";
 import { ProgressCard } from "@/components/cultural-training/ProgressCard";
@@ -66,6 +66,63 @@ const CulturalTraining = () => {
           </p>
         </div>
 
+        {/* Quick Actions */}
+        <div className="grid md:grid-cols-2 gap-4 mb-8">
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <Quiz className="text-blue-600" size={24} />
+                </div>
+                <div>
+                  <CardTitle className="text-lg">Cultural Knowledge Quiz</CardTitle>
+                  <CardDescription>Test your understanding of Ghanaian culture</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Link to="/cultural-training/quiz">
+                <Button className="w-full">
+                  Take Quiz
+                  <ArrowRight className="ml-2" size={16} />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                  <Trophy className="text-purple-600" size={24} />
+                </div>
+                <div>
+                  <CardTitle className="text-lg">Achievement Tracker</CardTitle>
+                  <CardDescription>Monitor your cultural learning progress</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {user ? (
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Completed Lessons</span>
+                    <span>{userProgress.length}/{lessons.length}</span>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    {userProgress.length === lessons.length 
+                      ? "🎉 All lessons completed!" 
+                      : `${lessons.length - userProgress.length} lessons remaining`
+                    }
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-gray-600">Sign in to track your progress</p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
         {user && (
           <ProgressCard 
             completedLessons={userProgress.length} 
@@ -79,14 +136,23 @@ const CulturalTraining = () => {
             const isCompleted = userProgress.includes(lesson.id);
             
             return (
-              <LessonCard
-                key={lesson.id}
-                lesson={lesson}
-                isCompleted={isCompleted}
-                onMarkComplete={() => markLessonComplete(lesson.id)}
-                onStartLesson={() => handleStartLesson(lesson)}
-                iconComponent={IconComponent}
-              />
+              <div key={lesson.id}>
+                <LessonCard
+                  lesson={lesson}
+                  isCompleted={isCompleted}
+                  onMarkComplete={() => markLessonComplete(lesson.id)}
+                  onStartLesson={() => handleStartLesson(lesson)}
+                  iconComponent={IconComponent}
+                />
+                <div className="mt-2 text-center">
+                  <Link 
+                    to={`/cultural-training/lesson/${lesson.id}`}
+                    className="text-sm text-primary hover:underline"
+                  >
+                    View Details →
+                  </Link>
+                </div>
+              </div>
             );
           })}
         </div>

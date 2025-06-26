@@ -9,6 +9,39 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      art: {
+        Row: {
+          attendees: number | null
+          date: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          location: string | null
+          name: string
+          time: string | null
+        }
+        Insert: {
+          attendees?: number | null
+          date?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          name: string
+          time?: string | null
+        }
+        Update: {
+          attendees?: number | null
+          date?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          name?: string
+          time?: string | null
+        }
+        Relationships: []
+      }
       buddy: {
         Row: {
           buddy_id: string | null
@@ -164,6 +197,39 @@ export type Database = {
         }
         Relationships: []
       }
+      entertainment: {
+        Row: {
+          attendees: number | null
+          date: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          location: string | null
+          name: string
+          time: string | null
+        }
+        Insert: {
+          attendees?: number | null
+          date?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          name: string
+          time?: string | null
+        }
+        Update: {
+          attendees?: number | null
+          date?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          name?: string
+          time?: string | null
+        }
+        Relationships: []
+      }
       events_places: {
         Row: {
           date: string
@@ -191,6 +257,105 @@ export type Database = {
         }
         Relationships: []
       }
+      festivals: {
+        Row: {
+          attendees: number | null
+          date: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          location: string | null
+          name: string
+          time: string | null
+        }
+        Insert: {
+          attendees?: number | null
+          date?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          name: string
+          time?: string | null
+        }
+        Update: {
+          attendees?: number | null
+          date?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          name?: string
+          time?: string | null
+        }
+        Relationships: []
+      }
+      food: {
+        Row: {
+          attendees: number | null
+          date: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          location: string | null
+          name: string
+          time: string | null
+        }
+        Insert: {
+          attendees?: number | null
+          date?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          name: string
+          time?: string | null
+        }
+        Update: {
+          attendees?: number | null
+          date?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          name?: string
+          time?: string | null
+        }
+        Relationships: []
+      }
+      hotels: {
+        Row: {
+          attendees: number | null
+          date: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          location: string | null
+          name: string
+          time: string | null
+        }
+        Insert: {
+          attendees?: number | null
+          date?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          name: string
+          time?: string | null
+        }
+        Update: {
+          attendees?: number | null
+          date?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          name?: string
+          time?: string | null
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string
@@ -212,6 +377,39 @@ export type Database = {
           recipient_id?: string | null
           sender_id?: string | null
           sent_at?: string | null
+        }
+        Relationships: []
+      }
+      places: {
+        Row: {
+          attendees: number | null
+          date: string | null
+          description: string | null
+          id: string
+          image_url: string | null
+          location: string | null
+          name: string
+          time: string | null
+        }
+        Insert: {
+          attendees?: number | null
+          date?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          name: string
+          time?: string | null
+        }
+        Update: {
+          attendees?: number | null
+          date?: string | null
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          name?: string
+          time?: string | null
         }
         Relationships: []
       }

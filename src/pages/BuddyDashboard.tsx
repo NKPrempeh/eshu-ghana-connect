@@ -44,8 +44,56 @@ const BuddyDashboard = () => {
     if (user) {
       fetchConnections();
       fetchBuddyStats();
+      setupRealtimeSubscriptions();
     }
   }, [user]);
+
+  const setupRealtimeSubscriptions = () => {
+    if (!user) return;
+
+    console.log('Setting up real-time subscriptions for buddy connections');
+
+    // Listen for new connections
+    const connectionsChannel = supabase
+      .channel('buddy_connections_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'buddy_connections'
+        },
+        (payload) => {
+          console.log('Buddy connection change detected:', payload);
+          fetchConnections(); // Refresh connections when changes occur
+        }
+      )
+      .subscribe();
+
+    // Listen for new messages to update last message
+    const messagesChannel = supabase
+      .channel('messages_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages'
+        },
+        (payload) => {
+          console.log('New message detected:', payload);
+          // Update connections to reflect new last message
+          fetchConnections();
+        }
+      )
+      .subscribe();
+
+    // Cleanup subscriptions
+    return () => {
+      supabase.removeChannel(connectionsChannel);
+      supabase.removeChannel(messagesChannel);
+    };
+  };
 
   const fetchConnections = async () => {
     if (!user) return;

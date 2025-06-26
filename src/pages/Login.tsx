@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
@@ -9,28 +10,54 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LogIn, Users } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { useBuddyRole } from "@/hooks/useBuddyRole";
+import { supabase } from "@/integrations/supabase/client";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { signIn, user } = useAuth();
+  const { isBuddy } = useBuddyRole();
   const { toast } = useToast();
   const navigate = useNavigate();
 
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
-      console.log('User is already logged in, redirecting to home');
-      navigate("/");
+      console.log('User is already logged in, checking buddy status');
+      
+      // Check if user is a buddy and redirect accordingly
+      const checkBuddyAndRedirect = async () => {
+        try {
+          const { data: buddyProfile } = await supabase
+            .from('buddy_profiles')
+            .select('id')
+            .eq('user_id', user.id)
+            .single();
+
+          if (buddyProfile) {
+            console.log('User is a buddy, redirecting to buddy dashboard');
+            navigate('/buddy-dashboard');
+          } else {
+            console.log('User is not a buddy, redirecting to home');
+            navigate('/');
+          }
+        } catch (error) {
+          console.error('Error checking buddy status:', error);
+          navigate('/');
+        }
+      };
+
+      checkBuddyAndRedirect();
     }
   }, [user, navigate]);
 
-  const handleSubmit = async (e: React.FormEvent, redirectTo?: string) => {
+  const handleSubmit = async (e: React.FormEvent, loginType: 'user' | 'buddy' = 'user') => {
     e.preventDefault();
     setLoading(true);
 
-    console.log('Attempting login with:', email);
+    console.log('Attempting login with:', email, 'as', loginType);
     const { error } = await signIn(email, password);
 
     if (error) {
@@ -56,11 +83,30 @@ const Login = () => {
         description: "You have successfully signed in.",
       });
       
-      // Redirect based on login type
-      if (redirectTo === 'buddy-dashboard') {
-        navigate('/buddy-dashboard');
+      // Check if user is a buddy and redirect accordingly
+      try {
+        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        
+        if (currentUser) {
+          const { data: buddyProfile } = await supabase
+            .from('buddy_profiles')
+            .select('id')
+            .eq('user_id', currentUser.id)
+            .single();
+
+          if (buddyProfile || loginType === 'buddy') {
+            console.log('Redirecting to buddy dashboard');
+            navigate('/buddy-dashboard');
+          } else {
+            console.log('Redirecting to home');
+            navigate('/');
+          }
+        }
+      } catch (redirectError) {
+        console.error('Error during redirect:', redirectError);
+        // Fallback redirect
+        navigate('/');
       }
-      // Otherwise, navigation will happen automatically via useEffect when user state updates
     }
     setLoading(false);
   };
@@ -89,7 +135,7 @@ const Login = () => {
                 </TabsList>
                 
                 <TabsContent value="user">
-                  <form onSubmit={(e) => handleSubmit(e)} className="space-y-4">
+                  <form onSubmit={(e) => handleSubmit(e, 'user')} className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="user-email">Email</Label>
                       <Input 
@@ -125,7 +171,7 @@ const Login = () => {
                 </TabsContent>
                 
                 <TabsContent value="buddy">
-                  <form onSubmit={(e) => handleSubmit(e, 'buddy-dashboard')} className="space-y-4">
+                  <form onSubmit={(e) => handleSubmit(e, 'buddy')} className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="buddy-email">Email</Label>
                       <Input 

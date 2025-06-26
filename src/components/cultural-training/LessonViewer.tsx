@@ -62,8 +62,8 @@ export const LessonViewer = ({ lesson, onComplete, onClose }: LessonViewerProps)
         <div className="flex-1 flex flex-col min-h-0">
           {!isCompleted ? (
             <>
-              <ScrollArea className="flex-1 px-8 py-6">
-                <div className="space-y-6">
+              <ScrollArea className="flex-1 h-96">
+                <div className="px-8 py-6 space-y-6">
                   <div className="prose max-w-none">
                     <h3 className="text-xl font-semibold mb-4">
                       {currentContent.title}

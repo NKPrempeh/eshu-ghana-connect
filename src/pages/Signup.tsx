@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { UserPlus, CheckCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -14,6 +15,8 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [country, setCountry] = useState("");
+  const [purpose, setPurpose] = useState("");
   const [loading, setLoading] = useState(false);
   const { signUp, user } = useAuth();
   const { toast } = useToast();
@@ -33,6 +36,8 @@ const Signup = () => {
 
     const { error } = await signUp(email, password, {
       full_name: fullName,
+      country: country,
+      purpose: purpose,
     });
 
     if (error) {
@@ -60,6 +65,18 @@ const Signup = () => {
     }
     setLoading(false);
   };
+
+  const countries = [
+    "United States", "United Kingdom", "Canada", "Australia", "Germany", 
+    "France", "Netherlands", "Spain", "Italy", "Sweden", "Norway", "Denmark",
+    "South Africa", "Kenya", "Nigeria", "Egypt", "Morocco", "Japan", "China",
+    "India", "South Korea", "Singapore", "Brazil", "Mexico", "Argentina", "Other"
+  ];
+
+  const purposes = [
+    "Tourism/Vacation", "Business/Work", "Education/Study", "Relocation/Moving",
+    "Cultural Exchange", "Volunteer Work", "Research", "Family Visit", "Other"
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
@@ -102,6 +119,32 @@ const Signup = () => {
                     required
                     className="w-full"
                   />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="country">Country of Origin</Label>
+                  <Select value={country} onValueChange={setCountry} required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {countries.map((c) => (
+                        <SelectItem key={c} value={c}>{c}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="purpose">Purpose of Visit to Ghana</Label>
+                  <Select value={purpose} onValueChange={setPurpose} required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your purpose" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {purposes.map((p) => (
+                        <SelectItem key={p} value={p}>{p}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>

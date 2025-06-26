@@ -1,15 +1,17 @@
-
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Users, BookOpen, Calendar, MessageCircle, MapPin, Star } from "lucide-react";
+import { ArrowRight, Users, BookOpen, Calendar, MessageCircle, MapPin, Star, User, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 import { GallerySection } from "@/components/home/GallerySection";
 import { EmailVerificationSuccess } from "@/components/auth/EmailVerificationSuccess";
 import { EshuLogo } from "@/components/EshuLogo";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
+  const { user } = useAuth();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
       <Navigation />
@@ -21,31 +23,53 @@ const Index = () => {
           <div className="mb-8">
             <EshuLogo width={150} height={75} className="mx-auto mb-6" />
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-            Welcome to <span className="ghana-gradient bg-clip-text text-transparent">Eshu</span>
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Your gateway to Ghanaian culture, traditions, and community. Connect, learn, and thrive in the heart of West Africa.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/signup">
-              <Button size="lg" className="ghana-gradient hover:opacity-90 transition-opacity">
-                Get Started <ArrowRight className="ml-2" size={20} />
-              </Button>
-            </Link>
-            <Link to="/events-places">
-              <Button size="lg" variant="outline" className="border-2">
-                Explore Events
-              </Button>
-            </Link>
-          </div>
+          
+          {user ? (
+            // Logged in user view
+            <>
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                Welcome back to <span className="ghana-gradient bg-clip-text text-transparent">Eshu</span>
+              </h1>
+              <p className="text-lg md:text-xl text-gray-600 mb-6 max-w-2xl mx-auto">
+                Continue your cultural journey in Ghana. Explore new experiences and stay connected with your community.
+              </p>
+              <div className="flex items-center justify-center gap-2 mb-8">
+                <User size={20} className="text-green-600" />
+                <span className="text-green-700 font-medium">Logged in as {user.email}</span>
+              </div>
+            </>
+          ) : (
+            // Not logged in view
+            <>
+              <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+                Welcome to <span className="ghana-gradient bg-clip-text text-transparent">Eshu</span>
+              </h1>
+              <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
+                Your gateway to Ghanaian culture, traditions, and community. Connect, learn, and thrive in the heart of West Africa.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link to="/signup">
+                  <Button size="lg" className="ghana-gradient hover:opacity-90 transition-opacity">
+                    Get Started <ArrowRight className="ml-2" size={20} />
+                  </Button>
+                </Link>
+                <Link to="/events-places">
+                  <Button size="lg" variant="outline" className="border-2">
+                    Explore Events
+                  </Button>
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       </section>
 
       {/* Features Grid */}
       <section className="py-16 px-4 bg-white/50">
         <div className="container mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold text-center mb-12">Everything You Need to Thrive</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">
+            {user ? "Your Cultural Journey Continues" : "Everything You Need to Thrive"}
+          </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="text-center hover:shadow-lg transition-shadow">
               <CardHeader>
@@ -180,27 +204,29 @@ const Index = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 px-4 bg-gradient-to-r from-orange-100 to-yellow-100">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl font-bold mb-6">Ready to Start Your Journey?</h2>
-          <p className="text-xl text-gray-600 mb-8">
-            Join thousands of people who have made Ghana their home with Eshu's guidance.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/signup">
-              <Button size="lg" className="ghana-gradient">
-                Join Our Community
-              </Button>
-            </Link>
-            <Link to="/buddy-signup">
-              <Button size="lg" variant="outline">
-                Become a Cultural Buddy
-              </Button>
-            </Link>
+      {/* CTA Section - Only show to non-logged in users */}
+      {!user && (
+        <section className="py-16 px-4 bg-gradient-to-r from-orange-100 to-yellow-100">
+          <div className="container mx-auto max-w-4xl text-center">
+            <h2 className="text-3xl font-bold mb-6">Ready to Start Your Journey?</h2>
+            <p className="text-xl text-gray-600 mb-8">
+              Join thousands of people who have made Ghana their home with Eshu's guidance.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/signup">
+                <Button size="lg" className="ghana-gradient">
+                  Join Our Community
+                </Button>
+              </Link>
+              <Link to="/buddy-signup">
+                <Button size="lg" variant="outline">
+                  Become a Cultural Buddy
+                </Button>
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 };

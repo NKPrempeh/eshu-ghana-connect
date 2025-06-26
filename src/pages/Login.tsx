@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
@@ -6,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LogIn } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LogIn, Users } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
@@ -26,7 +26,7 @@ const Login = () => {
     }
   }, [user, navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent, redirectTo?: string) => {
     e.preventDefault();
     setLoading(true);
 
@@ -55,7 +55,12 @@ const Login = () => {
         title: "Welcome back!",
         description: "You have successfully signed in.",
       });
-      // Navigation will happen automatically via useEffect when user state updates
+      
+      // Redirect based on login type
+      if (redirectTo === 'buddy-dashboard') {
+        navigate('/buddy-dashboard');
+      }
+      // Otherwise, navigation will happen automatically via useEffect when user state updates
     }
     setLoading(false);
   };
@@ -77,45 +82,91 @@ const Login = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input 
-                    id="email" 
-                    type="email" 
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="w-full"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input 
-                    id="password" 
-                    type="password" 
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="w-full"
-                  />
-                </div>
-                <Button 
-                  type="submit" 
-                  className="w-full ghana-gradient hover:opacity-90 transition-opacity"
-                  disabled={loading}
-                >
-                  {loading ? "Signing In..." : "Sign In"}
-                </Button>
-                <div className="text-center text-sm text-gray-600">
-                  Don't have an account?{" "}
-                  <Link to="/signup" className="text-primary hover:underline">
-                    Sign up here
-                  </Link>
-                </div>
-              </form>
+              <Tabs defaultValue="user" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="user">User Login</TabsTrigger>
+                  <TabsTrigger value="buddy">Buddy Login</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="user">
+                  <form onSubmit={(e) => handleSubmit(e)} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="user-email">Email</Label>
+                      <Input 
+                        id="user-email" 
+                        type="email" 
+                        placeholder="Enter your email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="w-full"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="user-password">Password</Label>
+                      <Input 
+                        id="user-password" 
+                        type="password" 
+                        placeholder="Enter your password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        className="w-full"
+                      />
+                    </div>
+                    <Button 
+                      type="submit" 
+                      className="w-full ghana-gradient hover:opacity-90 transition-opacity"
+                      disabled={loading}
+                    >
+                      {loading ? "Signing In..." : "Sign In as User"}
+                    </Button>
+                  </form>
+                </TabsContent>
+                
+                <TabsContent value="buddy">
+                  <form onSubmit={(e) => handleSubmit(e, 'buddy-dashboard')} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="buddy-email">Email</Label>
+                      <Input 
+                        id="buddy-email" 
+                        type="email" 
+                        placeholder="Enter your buddy email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="w-full"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="buddy-password">Password</Label>
+                      <Input 
+                        id="buddy-password" 
+                        type="password" 
+                        placeholder="Enter your password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        className="w-full"
+                      />
+                    </div>
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-green-600 hover:bg-green-700 text-white transition-colors"
+                      disabled={loading}
+                    >
+                      {loading ? "Signing In..." : "Sign In as Buddy"}
+                    </Button>
+                  </form>
+                </TabsContent>
+              </Tabs>
+              
+              <div className="text-center text-sm text-gray-600 mt-4">
+                Don't have an account?{" "}
+                <Link to="/signup" className="text-primary hover:underline">
+                  Sign up here
+                </Link>
+              </div>
             </CardContent>
           </Card>
         </div>

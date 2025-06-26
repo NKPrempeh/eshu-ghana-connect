@@ -20,6 +20,7 @@ interface InfoItem {
     label: string;
     url: string;
   }[];
+  details?: string[];
 }
 
 interface InfoCardProps {
@@ -44,6 +45,7 @@ export const InfoCard = ({ item }: InfoCardProps) => {
       case 'emergency': return 'bg-red-100 text-red-800';
       case 'transport': return 'bg-orange-100 text-orange-800';
       case 'housing': return 'bg-teal-100 text-teal-800';
+      case 'business': return 'bg-green-100 text-green-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -66,6 +68,20 @@ export const InfoCard = ({ item }: InfoCardProps) => {
       
       <CardContent>
         <p className="text-gray-700 mb-4">{item.description}</p>
+        
+        {item.details && (
+          <div className="space-y-2 mb-4">
+            <h4 className="font-medium text-sm">Key Information:</h4>
+            <ul className="space-y-1">
+              {item.details.map((detail, index) => (
+                <li key={index} className="flex items-start gap-2 text-sm text-gray-600">
+                  <span className="text-primary mt-1">•</span>
+                  {detail}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         
         {item.contact && (
           <div className="space-y-2 mb-4">

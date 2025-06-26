@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
@@ -90,28 +91,48 @@ const BuddySignup = () => {
     const fileName = `${Math.random()}.${fileExt}`;
     const filePath = `avatars/${fileName}`;
 
-    // Create bucket if it doesn't exist
     try {
-      const { data: buckets } = await supabase.storage.listBuckets();
+      // First, ensure the avatars bucket exists
+      const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
+      
+      if (bucketsError) {
+        console.error('Error listing buckets:', bucketsError);
+        throw bucketsError;
+      }
+
       const avatarBucket = buckets?.find(bucket => bucket.name === 'avatars');
       
       if (!avatarBucket) {
-        await supabase.storage.createBucket('avatars', { public: true });
+        console.log('Creating avatars bucket...');
+        const { error: createBucketError } = await supabase.storage.createBucket('avatars', { 
+          public: true,
+          allowedMimeTypes: ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp'],
+          fileSizeLimit: 5242880 // 5MB
+        });
+        
+        if (createBucketError) {
+          console.error('Error creating bucket:', createBucketError);
+          throw createBucketError;
+        }
+        console.log('Avatars bucket created successfully');
       }
+
+      // Upload the file
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, avatarFile);
+
+      if (uploadError) {
+        console.error('Error uploading file:', uploadError);
+        throw uploadError;
+      }
+
+      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+      return data.publicUrl;
     } catch (error) {
-      console.log('Bucket creation handled');
+      console.error('Error in uploadAvatar:', error);
+      throw error;
     }
-
-    const { error: uploadError } = await supabase.storage
-      .from('avatars')
-      .upload(filePath, avatarFile);
-
-    if (uploadError) {
-      throw uploadError;
-    }
-
-    const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
-    return data.publicUrl;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

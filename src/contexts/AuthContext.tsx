@@ -116,11 +116,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     console.log('Signing out...');
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Signout error:', error);
-    } else {
-      console.log('Signed out successfully');
+    try {
+      // Only attempt to sign out if we have a session
+      if (session) {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          console.error('Signout error:', error);
+        } else {
+          console.log('Signed out successfully');
+        }
+      } else {
+        console.log('No active session to sign out from');
+        // Still clear local state even if no active session
+        setSession(null);
+        setUser(null);
+      }
+    } catch (err) {
+      console.error('Signout error:', err);
+      // Clear local state even if signout fails
+      setSession(null);
+      setUser(null);
     }
   };
 

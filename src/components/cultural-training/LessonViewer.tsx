@@ -3,10 +3,9 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { X, ChevronRight, ChevronLeft, CheckCircle, Sparkles } from "lucide-react";
 import { Lesson } from "@/types/cultural-training";
-import { getLessonContent } from "./LessonContent";
+import { ContentRenderer } from "./ContentRenderer";
 
 interface LessonViewerProps {
   lesson: Lesson;
@@ -14,14 +13,38 @@ interface LessonViewerProps {
   onClose: () => void;
 }
 
+interface ContentItem {
+  type: "heading" | "text" | "list";
+  content: string | string[];
+}
+
 export const LessonViewer = ({ lesson, onComplete, onClose }: LessonViewerProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
   
-  const progress = ((currentStep + 1) / lesson.content.length) * 100;
+  // Parse the lesson content as structured content
+  const lessonContent = Array.isArray(lesson.content) 
+    ? lesson.content as ContentItem[]
+    : [];
+  
+  // Group content into steps (every 3-4 items per step for better pacing)
+  const contentSteps: ContentItem[][] = [];
+  const itemsPerStep = 4;
+  
+  for (let i = 0; i < lessonContent.length; i += itemsPerStep) {
+    contentSteps.push(lessonContent.slice(i, i + itemsPerStep));
+  }
+  
+  // If no steps, create one step with all content
+  if (contentSteps.length === 0 && lessonContent.length > 0) {
+    contentSteps.push(lessonContent);
+  }
+  
+  const totalSteps = Math.max(contentSteps.length, 1);
+  const progress = ((currentStep + 1) / totalSteps) * 100;
 
   const handleNext = () => {
-    if (currentStep < lesson.content.length - 1) {
+    if (currentStep < totalSteps - 1) {
       setCurrentStep(currentStep + 1);
     } else {
       setIsCompleted(true);
@@ -39,7 +62,7 @@ export const LessonViewer = ({ lesson, onComplete, onClose }: LessonViewerProps)
     onClose();
   };
 
-  const currentContent = getLessonContent(lesson.id, currentStep);
+  const currentContent = contentSteps[currentStep] || [];
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
@@ -49,7 +72,7 @@ export const LessonViewer = ({ lesson, onComplete, onClose }: LessonViewerProps)
             <div>
               <CardTitle className="text-2xl">{lesson.title}</CardTitle>
               <p className="text-sm text-gray-600 mt-1">
-                Step {currentStep + 1} of {lesson.content.length}
+                Step {currentStep + 1} of {totalSteps}
               </p>
             </div>
             <Button variant="ghost" size="sm" onClick={onClose}>
@@ -64,16 +87,7 @@ export const LessonViewer = ({ lesson, onComplete, onClose }: LessonViewerProps)
             <>
               <div className="flex-1 overflow-hidden">
                 <div className="h-full max-h-[400px] overflow-y-auto px-8 py-6">
-                  <div className="space-y-6">
-                    <div className="prose max-w-none">
-                      <h3 className="text-xl font-semibold mb-4">
-                        {currentContent.title}
-                      </h3>
-                      <div className="space-y-4">
-                        {currentContent.content}
-                      </div>
-                    </div>
-                  </div>
+                  <ContentRenderer content={currentContent} />
                 </div>
               </div>
               
@@ -89,14 +103,14 @@ export const LessonViewer = ({ lesson, onComplete, onClose }: LessonViewerProps)
                   </Button>
                   
                   <span className="text-sm text-gray-500">
-                    {currentStep + 1} / {lesson.content.length}
+                    {currentStep + 1} / {totalSteps}
                   </span>
                   
                   <Button 
                     onClick={handleNext}
                     className="ghana-gradient"
                   >
-                    {currentStep === lesson.content.length - 1 ? 'Finish Lesson' : 'Next'}
+                    {currentStep === totalSteps - 1 ? 'Finish Lesson' : 'Next'}
                     <ChevronRight size={16} className="ml-2" />
                   </Button>
                 </div>

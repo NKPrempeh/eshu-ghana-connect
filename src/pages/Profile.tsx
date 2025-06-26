@@ -20,7 +20,7 @@ const Profile = () => {
     username: "",
     avatar_url: ""
   });
-  const [buddyProfile, setBuddyProfile] = useState(null);
+  const [buddyProfile, setBuddyProfile] = useState<any>(null);
 
   useEffect(() => {
     if (user) {
@@ -31,6 +31,7 @@ const Profile = () => {
 
   const fetchProfile = async () => {
     try {
+      console.log('Fetching profile for user:', user?.id);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -43,6 +44,7 @@ const Profile = () => {
       }
 
       if (data) {
+        console.log('Profile data fetched:', data);
         setProfile({
           full_name: data.full_name || "",
           username: data.username || "",
@@ -56,6 +58,7 @@ const Profile = () => {
 
   const fetchBuddyProfile = async () => {
     try {
+      console.log('Fetching buddy profile for user:', user?.id);
       const { data, error } = await supabase
         .from('buddy_profiles')
         .select('*')
@@ -68,6 +71,7 @@ const Profile = () => {
       }
 
       if (data) {
+        console.log('Buddy profile data fetched:', data);
         setBuddyProfile(data);
       }
     } catch (error) {
@@ -128,10 +132,20 @@ const Profile = () => {
   };
 
   const handleSaveProfile = async () => {
-    if (!user) return;
+    if (!user) {
+      console.error('No user found');
+      toast({
+        title: "Error",
+        description: "No user session found. Please log in again.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     try {
       setLoading(true);
+      console.log('Saving profile for user:', user.id);
+      console.log('Profile data to save:', profile);
 
       // Update main profile
       const { error: profileError } = await supabase
@@ -144,10 +158,16 @@ const Profile = () => {
           updated_at: new Date().toISOString()
         });
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error('Profile update error:', profileError);
+        throw profileError;
+      }
+
+      console.log('Profile updated successfully');
 
       // Update buddy profile if exists
       if (buddyProfile) {
+        console.log('Updating buddy profile avatar...');
         const { error: buddyError } = await supabase
           .from('buddy_profiles')
           .update({
@@ -155,23 +175,38 @@ const Profile = () => {
           })
           .eq('user_id', user.id);
 
-        if (buddyError) throw buddyError;
+        if (buddyError) {
+          console.error('Buddy profile update error:', buddyError);
+          throw buddyError;
+        }
+        console.log('Buddy profile updated successfully');
       }
 
       toast({
         title: "Profile updated!",
         description: "Your profile has been successfully updated.",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error updating profile:', error);
       toast({
         title: "Update failed",
-        description: "Failed to update profile. Please try again.",
+        description: error.message || "Failed to update profile. Please try again.",
         variant: "destructive",
       });
     } finally {
       setLoading(false);
     }
+  };
+
+  // Helper function to safely render array data
+  const renderArrayData = (data: any): string => {
+    if (Array.isArray(data)) {
+      return data.join(", ");
+    }
+    if (typeof data === 'string') {
+      return data;
+    }
+    return "None";
   };
 
   return (
@@ -260,10 +295,10 @@ const Profile = () => {
                   </p>
                   <div className="bg-green-50 p-3 rounded-md">
                     <p className="text-sm text-green-800">
-                      <strong>Location:</strong> {buddyProfile.location}
+                      <strong>Location:</strong> {buddyProfile.location || "Not specified"}
                     </p>
                     <p className="text-sm text-green-800">
-                      <strong>Specialties:</strong> {buddyProfile.specialties?.join(", ") || "None"}
+                      <strong>Specialties:</strong> {renderArrayData(buddyProfile.specialties)}
                     </p>
                   </div>
                 </div>

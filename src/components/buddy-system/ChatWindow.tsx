@@ -33,18 +33,9 @@ export const ChatWindow = ({ buddy, onClose }: ChatWindowProps) => {
   const handleSendMessage = async () => {
     if (!newMessage.trim()) return;
 
-    console.log('Attempting to send message:', {
-      content: newMessage,
-      sender: user?.id,
-      recipient: buddy.user_id
-    });
-
     const success = await sendMessage(newMessage);
     if (success) {
       setNewMessage("");
-      console.log('Message sent successfully');
-    } else {
-      console.error('Failed to send message');
     }
   };
 
@@ -86,11 +77,6 @@ export const ChatWindow = ({ buddy, onClose }: ChatWindowProps) => {
     groups[date].push(message);
     return groups;
   }, {});
-
-  console.log('Current user ID:', user?.id);
-  console.log('Buddy user ID:', buddy.user_id);
-  console.log('Messages:', messages);
-  console.log('Grouped messages:', groupedMessages);
 
   return (
     <Card className="fixed bottom-4 right-4 w-96 h-[500px] shadow-lg z-50 bg-white border-l-4 border-l-primary flex flex-col">

@@ -74,15 +74,15 @@ const CulturalTraining = () => {
                   <HelpCircle className="text-blue-600" size={24} />
                 </div>
                 <div>
-                  <CardTitle className="text-lg">Cultural Knowledge Quiz</CardTitle>
-                  <CardDescription>Test your understanding of Ghanaian culture</CardDescription>
+                  <CardTitle className="text-lg">Cultural Knowledge Hub</CardTitle>
+                  <CardDescription>Access all quizzes and knowledge tests</CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <Link to="/cultural-training/quiz">
+              <Link to="/quiz-hub">
                 <Button className="w-full">
-                  Take Quiz
+                  Explore Quiz Hub
                   <ArrowRight className="ml-2" size={16} />
                 </Button>
               </Link>

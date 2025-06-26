@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import CulturalTraining from "./pages/CulturalTraining";
 import LessonDetail from "./pages/LessonDetail";
 import CulturalQuiz from "./pages/CulturalQuiz";
+import QuizHub from "./pages/QuizHub";
 import BuddySystem from "./pages/BuddySystem";
 import BuddySignup from "./pages/BuddySignup";
 import BuddyDashboard from "./pages/BuddyDashboard";
@@ -38,6 +39,8 @@ function App() {
                 <Route path="/cultural-training" element={<CulturalTraining />} />
                 <Route path="/cultural-training/lesson/:id" element={<LessonDetail />} />
                 <Route path="/cultural-training/quiz" element={<CulturalQuiz />} />
+                <Route path="/quiz-hub" element={<QuizHub />} />
+                <Route path="/quiz/:quizType" element={<CulturalQuiz />} />
                 <Route path="/buddy-system" element={<BuddySystem />} />
                 <Route path="/buddy-signup" element={<BuddySignup />} />
                 <Route path="/buddy-dashboard" element={<BuddyDashboard />} />

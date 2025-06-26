@@ -1,23 +1,18 @@
 
 import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { CheckCircle, X, ArrowRight, RotateCcw, Trophy, BookOpen } from "lucide-react";
+import { ArrowLeft, RotateCcw, Trophy, BookOpen } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Link } from "react-router-dom";
+import { MultipleChoiceQuiz } from "@/components/quiz/MultipleChoiceQuiz";
+import { TrueFalseQuiz } from "@/components/quiz/TrueFalseQuiz";
+import { useQuizSystem, QuizQuestion } from "@/hooks/useQuizSystem";
 
-interface QuizQuestion {
-  id: number;
-  question: string;
-  options: string[];
-  correctAnswer: number;
-  explanation: string;
-  category: string;
-}
-
-const quizQuestions: QuizQuestion[] = [
+// Extended quiz questions with more variety
+const allQuizQuestions: QuizQuestion[] = [
   {
     id: 1,
     question: "What is the most appropriate way to greet an elder in Ghana?",
@@ -29,7 +24,9 @@ const quizQuestions: QuizQuestion[] = [
     ],
     correctAnswer: 2,
     explanation: "In Ghanaian culture, showing respect to elders involves a slight bow or nod when greeting, using your right hand for handshakes, and demonstrating humility.",
-    category: "Social Etiquette"
+    category: "Social Etiquette",
+    difficulty: "beginner",
+    points: 10
   },
   {
     id: 2,
@@ -42,7 +39,9 @@ const quizQuestions: QuizQuestion[] = [
     ],
     correctAnswer: 1,
     explanation: "In Ghanaian dining culture, you should always use your right hand when eating fufu and other traditional foods. The left hand is considered unclean.",
-    category: "Food Culture"
+    category: "Food Culture",
+    difficulty: "beginner",
+    points: 10
   },
   {
     id: 3,
@@ -55,7 +54,9 @@ const quizQuestions: QuizQuestion[] = [
     ],
     correctAnswer: 2,
     explanation: "'Maakye' is the Twi greeting for 'Good morning'. Learning basic greetings in local languages shows respect for Ghanaian culture.",
-    category: "Language"
+    category: "Language",
+    difficulty: "beginner",
+    points: 10
   },
   {
     id: 4,
@@ -68,77 +69,177 @@ const quizQuestions: QuizQuestion[] = [
     ],
     correctAnswer: 1,
     explanation: "Kente cloth is deeply symbolic in Ghanaian culture. Each pattern, color, and design element has specific meanings related to history, proverbs, and cultural values.",
-    category: "Traditional Clothing"
+    category: "Traditional Clothing",
+    difficulty: "intermediate",
+    points: 15
   },
   {
     id: 5,
     question: "In Ghanaian markets, what is expected when making a purchase?",
     options: [
       "Accept the first price given",
-      "Bargain is expected and part of the cultural experience",
+      "Bargaining is expected and part of the cultural experience",
       "Only pay with credit cards",
       "Don't interact with sellers directly"
     ],
     correctAnswer: 1,
     explanation: "Bargaining is an integral part of Ghanaian market culture. It's expected and shows engagement with local customs. Start by offering 50-60% of the asking price.",
-    category: "Shopping Culture"
+    category: "Shopping Culture",
+    difficulty: "intermediate",
+    points: 15
+  },
+  {
+    id: 6,
+    question: "What is the traditional Ghanaian way to show respect when passing in front of seated people?",
+    options: [
+      "Walk normally without acknowledgment",
+      "Say 'excuse me' and walk quickly",
+      "Bend slightly and say 'agoo' or similar phrase",
+      "Walk behind them instead"
+    ],
+    correctAnswer: 2,
+    explanation: "When passing in front of seated people, especially elders, it's customary to bend slightly and say 'agoo' (excuse me) as a sign of respect.",
+    category: "Social Etiquette",
+    difficulty: "intermediate",
+    points: 15
+  },
+  {
+    id: 7,
+    question: "Which festival celebrates the Akan New Year?",
+    options: [
+      "Homowo",
+      "Adae Kese",
+      "Odwira",
+      "Damba"
+    ],
+    correctAnswer: 2,
+    explanation: "Odwira is the traditional Akan festival that celebrates the New Year and honors ancestors. It's a time of purification and renewal.",
+    category: "Festivals",
+    difficulty: "advanced",
+    points: 20
+  },
+  {
+    id: 8,
+    question: "What does 'Medaase' mean in Twi?",
+    options: [
+      "Hello",
+      "Goodbye",
+      "Thank you",
+      "Please"
+    ],
+    correctAnswer: 2,
+    explanation: "'Medaase' is the Twi word for 'thank you'. It's important to express gratitude in local languages to show cultural appreciation.",
+    category: "Language",
+    difficulty: "beginner",
+    points: 10
+  }
+];
+
+const trueFalseQuestions = [
+  {
+    id: 1,
+    question: "It is considered rude to refuse food when offered by a Ghanaian host.",
+    correctAnswer: true,
+    explanation: "In Ghanaian culture, refusing food offered by a host can be seen as disrespectful. It's polite to at least taste what's offered.",
+    category: "Social Etiquette"
+  },
+  {
+    id: 2,
+    question: "You should always use both hands when receiving or giving something to an elder.",
+    correctAnswer: true,
+    explanation: "Using both hands when giving or receiving items from elders shows respect and is an important cultural practice in Ghana.",
+    category: "Social Etiquette"
+  },
+  {
+    id: 3,
+    question: "Ghana's independence day is celebrated on March 6th.",
+    correctAnswer: true,
+    explanation: "Ghana gained independence from British colonial rule on March 6, 1957, making it the first African country to achieve independence.",
+    category: "History"
   }
 ];
 
 const CulturalQuiz = () => {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [showExplanation, setShowExplanation] = useState(false);
-  const [score, setScore] = useState(0);
-  const [quizCompleted, setQuizCompleted] = useState(false);
-  const [answers, setAnswers] = useState<number[]>([]);
+  const { quizType } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuth();
+  const { saveQuizResult } = useQuizSystem();
+  const [quizCompleted, setQuizCompleted] = useState(false);
+  const [quizResult, setQuizResult] = useState<{ score: number; timeSpent: number } | null>(null);
 
-  const handleAnswerSelect = (answerIndex: number) => {
-    if (!showExplanation) {
-      setSelectedAnswer(answerIndex);
-      setShowExplanation(true);
-      
-      const newAnswers = [...answers];
-      newAnswers[currentQuestion] = answerIndex;
-      setAnswers(newAnswers);
-      
-      if (answerIndex === quizQuestions[currentQuestion].correctAnswer) {
-        setScore(score + 1);
-      }
+  const getQuizConfig = () => {
+    switch (quizType) {
+      case 'cultural-basics':
+        return {
+          title: 'Cultural Basics Quiz',
+          questions: allQuizQuestions.filter(q => q.difficulty === 'beginner').slice(0, 10),
+          type: 'multiple-choice' as const,
+          difficulty: 'beginner'
+        };
+      case 'advanced-culture':
+        return {
+          title: 'Advanced Cultural Knowledge',
+          questions: allQuizQuestions.filter(q => q.difficulty === 'advanced'),
+          type: 'multiple-choice' as const,
+          difficulty: 'advanced'
+        };
+      case 'true-false':
+        return {
+          title: 'True or False Challenge',
+          questions: trueFalseQuestions,
+          type: 'true-false' as const,
+          difficulty: 'intermediate'
+        };
+      case 'quick-challenge':
+        return {
+          title: 'Quick Knowledge Challenge',
+          questions: allQuizQuestions.slice(0, 5),
+          type: 'multiple-choice' as const,
+          difficulty: 'mixed'
+        };
+      default:
+        return {
+          title: 'General Cultural Quiz',
+          questions: allQuizQuestions.slice(0, 8),
+          type: 'multiple-choice' as const,
+          difficulty: 'mixed'
+        };
     }
   };
 
-  const handleNextQuestion = () => {
-    if (currentQuestion < quizQuestions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-      setSelectedAnswer(null);
-      setShowExplanation(false);
-    } else {
-      setQuizCompleted(true);
+  const quizConfig = getQuizConfig();
+
+  const handleQuizComplete = (score: number, timeSpent: number) => {
+    setQuizResult({ score, timeSpent });
+    setQuizCompleted(true);
+
+    if (user && quizConfig.type === 'multiple-choice') {
+      saveQuizResult({
+        score,
+        totalQuestions: quizConfig.questions.length,
+        timeSpent,
+        category: quizConfig.title,
+        difficulty: quizConfig.difficulty,
+        completedAt: new Date()
+      });
     }
   };
 
   const resetQuiz = () => {
-    setCurrentQuestion(0);
-    setSelectedAnswer(null);
-    setShowExplanation(false);
-    setScore(0);
     setQuizCompleted(false);
-    setAnswers([]);
+    setQuizResult(null);
   };
 
   const getScoreMessage = () => {
-    const percentage = (score / quizQuestions.length) * 100;
+    if (!quizResult) return "";
+    const percentage = (quizResult.score / quizConfig.questions.length) * 100;
     if (percentage >= 80) return "Excellent! You have a great understanding of Ghanaian culture.";
     if (percentage >= 60) return "Good job! You're learning well about Ghanaian customs.";
     if (percentage >= 40) return "Not bad! Consider reviewing the cultural training lessons.";
     return "Keep learning! The cultural training lessons will help you improve.";
   };
 
-  const progress = ((currentQuestion + 1) / quizQuestions.length) * 100;
-
-  if (quizCompleted) {
+  if (quizCompleted && quizResult) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
         <Navigation />
@@ -151,12 +252,12 @@ const CulturalQuiz = () => {
                     <Trophy className="text-green-600" size={40} />
                   </div>
                   <h2 className="text-3xl font-bold text-gray-900 mb-2">Quiz Complete!</h2>
-                  <p className="text-lg text-gray-600">You scored {score} out of {quizQuestions.length}</p>
-                </div>
-                
-                <div className="mb-6">
-                  <Progress value={(score / quizQuestions.length) * 100} className="w-full mb-2" />
-                  <p className="text-sm text-gray-600">{Math.round((score / quizQuestions.length) * 100)}% Correct</p>
+                  <p className="text-lg text-gray-600">
+                    You scored {quizResult.score} out of {quizConfig.questions.length}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Time: {Math.floor(quizResult.timeSpent / 60)}:{(quizResult.timeSpent % 60).toString().padStart(2, '0')}
+                  </p>
                 </div>
                 
                 <p className="text-gray-700 mb-6">{getScoreMessage()}</p>
@@ -167,6 +268,11 @@ const CulturalQuiz = () => {
                     Retake Quiz
                   </Button>
                   <Button asChild className="ghana-gradient">
+                    <Link to="/quiz-hub">
+                      More Quizzes
+                    </Link>
+                  </Button>
+                  <Button asChild variant="outline">
                     <Link to="/cultural-training">
                       <BookOpen className="mr-2" size={16} />
                       Continue Learning
@@ -189,95 +295,41 @@ const CulturalQuiz = () => {
     );
   }
 
-  const question = quizQuestions[currentQuestion];
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
       <Navigation />
       
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Cultural Knowledge Quiz</h1>
-            <p className="text-gray-600">Test your understanding of Ghanaian culture and customs</p>
+        <div className="mb-6">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate('/quiz-hub')}
+            className="mb-4"
+          >
+            <ArrowLeft className="mr-2" size={16} />
+            Back to Quiz Hub
+          </Button>
+          
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{quizConfig.title}</h1>
+            <p className="text-gray-600">Test your knowledge of Ghanaian culture</p>
           </div>
-
-          <Card className="mb-4">
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle className="text-lg">
-                  Question {currentQuestion + 1} of {quizQuestions.length}
-                </CardTitle>
-                <span className={`px-2 py-1 text-xs font-medium rounded-full bg-primary/10 text-primary`}>
-                  {question.category}
-                </span>
-              </div>
-              <Progress value={progress} className="w-full" />
-            </CardHeader>
-            <CardContent>
-              <h3 className="text-xl font-semibold mb-6">{question.question}</h3>
-              
-              <div className="space-y-3">
-                {question.options.map((option, index) => {
-                  let buttonClass = "w-full text-left p-4 border rounded-lg transition-colors ";
-                  
-                  if (showExplanation) {
-                    if (index === question.correctAnswer) {
-                      buttonClass += "border-green-500 bg-green-50 text-green-800";
-                    } else if (index === selectedAnswer && index !== question.correctAnswer) {
-                      buttonClass += "border-red-500 bg-red-50 text-red-800";
-                    } else {
-                      buttonClass += "border-gray-200 bg-gray-50 text-gray-600";
-                    }
-                  } else {
-                    buttonClass += "border-gray-200 hover:border-primary hover:bg-primary/5";
-                  }
-                  
-                  return (
-                    <button
-                      key={index}
-                      onClick={() => handleAnswerSelect(index)}
-                      className={buttonClass}
-                      disabled={showExplanation}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span>{option}</span>
-                        {showExplanation && index === question.correctAnswer && (
-                          <CheckCircle className="text-green-600" size={20} />
-                        )}
-                        {showExplanation && index === selectedAnswer && index !== question.correctAnswer && (
-                          <X className="text-red-600" size={20} />
-                        )}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-              
-              {showExplanation && (
-                <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                  <h4 className="font-semibold text-blue-900 mb-2">Explanation:</h4>
-                  <p className="text-blue-800">{question.explanation}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {showExplanation && (
-            <div className="text-center">
-              <Button onClick={handleNextQuestion} size="lg" className="ghana-gradient">
-                {currentQuestion < quizQuestions.length - 1 ? (
-                  <>
-                    Next Question
-                    <ArrowRight className="ml-2" size={16} />
-                  </>
-                ) : (
-                  'View Results'
-                )}
-              </Button>
-            </div>
-          )}
         </div>
+
+        {quizConfig.type === 'multiple-choice' ? (
+          <MultipleChoiceQuiz
+            questions={quizConfig.questions as QuizQuestion[]}
+            onComplete={handleQuizComplete}
+            title={quizConfig.title}
+            difficulty={quizConfig.difficulty}
+          />
+        ) : (
+          <TrueFalseQuiz
+            questions={quizConfig.questions as any[]}
+            onComplete={handleQuizComplete}
+            title={quizConfig.title}
+          />
+        )}
       </div>
     </div>
   );

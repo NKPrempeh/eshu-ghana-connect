@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { X, ChevronRight, ChevronLeft, CheckCircle, Sparkles } from "lucide-react";
+import { X, ChevronRight, ChevronLeft, CheckCircle, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
 import { Lesson } from "@/types/cultural-training";
 import { getLessonContent } from "./LessonContent";
 
@@ -39,6 +39,20 @@ export const LessonViewer = ({ lesson, onComplete, onClose }: LessonViewerProps)
     onClose();
   };
 
+  const scrollToTop = () => {
+    const scrollArea = document.querySelector('[data-radix-scroll-area-viewport]');
+    if (scrollArea) {
+      scrollArea.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const scrollToBottom = () => {
+    const scrollArea = document.querySelector('[data-radix-scroll-area-viewport]');
+    if (scrollArea) {
+      scrollArea.scrollTo({ top: scrollArea.scrollHeight, behavior: 'smooth' });
+    }
+  };
+
   const currentContent = getLessonContent(lesson.id, currentStep);
 
   return (
@@ -59,10 +73,10 @@ export const LessonViewer = ({ lesson, onComplete, onClose }: LessonViewerProps)
           <Progress value={progress} className="w-full mt-4" />
         </CardHeader>
         
-        <div className="flex-1 flex flex-col min-h-0">
+        <div className="flex-1 flex flex-col min-h-0 relative">
           {!isCompleted ? (
             <>
-              <div className="flex-1 overflow-hidden">
+              <div className="flex-1 overflow-hidden relative">
                 <ScrollArea className="h-full">
                   <div className="px-8 py-6 space-y-6">
                     <div className="prose max-w-none">
@@ -75,6 +89,26 @@ export const LessonViewer = ({ lesson, onComplete, onClose }: LessonViewerProps)
                     </div>
                   </div>
                 </ScrollArea>
+                
+                {/* Scroll control buttons */}
+                <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex flex-col gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={scrollToTop}
+                    className="bg-white/90 hover:bg-white shadow-lg"
+                  >
+                    <ChevronUp size={16} />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={scrollToBottom}
+                    className="bg-white/90 hover:bg-white shadow-lg"
+                  >
+                    <ChevronDown size={16} />
+                  </Button>
+                </div>
               </div>
               
               <div className="flex-shrink-0 px-8 py-6 border-t bg-gray-50">

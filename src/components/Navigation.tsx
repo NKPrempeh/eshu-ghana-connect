@@ -46,7 +46,13 @@ const Navigation = () => {
   );
 
   const handleSignOut = async () => {
-    await signOut();
+    console.log('Attempting to sign out...');
+    try {
+      await signOut();
+      console.log('Sign out successful');
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
   };
 
   if (loading || buddyLoading) {

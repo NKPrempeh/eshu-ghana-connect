@@ -21,6 +21,7 @@ export const useCulturalTraining = () => {
 
   const fetchLessons = async () => {
     try {
+      console.log('Fetching cultural lessons...');
       const { data, error } = await supabase
         .from('cultural_lessons')
         .select('*')
@@ -34,10 +35,29 @@ export const useCulturalTraining = () => {
           variant: "destructive",
         });
       } else {
-        const formattedLessons = (data || []).map((lesson: any) => ({
-          ...lesson,
-          content: Array.isArray(lesson.content) ? lesson.content : JSON.parse(lesson.content || '[]')
-        }));
+        console.log('Raw lessons data:', data);
+        const formattedLessons = (data || []).map((lesson: any) => {
+          let parsedContent;
+          try {
+            // Handle both string and already parsed content
+            if (typeof lesson.content === 'string') {
+              parsedContent = JSON.parse(lesson.content);
+            } else if (Array.isArray(lesson.content)) {
+              parsedContent = lesson.content;
+            } else {
+              parsedContent = [];
+            }
+          } catch (parseError) {
+            console.error('Error parsing lesson content:', parseError, lesson.content);
+            parsedContent = [];
+          }
+          
+          return {
+            ...lesson,
+            content: parsedContent
+          };
+        });
+        console.log('Formatted lessons:', formattedLessons);
         setLessons(formattedLessons);
       }
     } catch (error) {
@@ -55,6 +75,7 @@ export const useCulturalTraining = () => {
     if (!user) return;
 
     try {
+      console.log('Fetching user progress for:', user.id);
       const { data, error } = await supabase
         .from('user_lesson_progress')
         .select('lesson_id')
@@ -63,6 +84,7 @@ export const useCulturalTraining = () => {
       if (error) {
         console.error('Error fetching progress:', error);
       } else {
+        console.log('User progress data:', data);
         setUserProgress((data || []).map((p: any) => p.lesson_id));
       }
     } catch (error) {
@@ -81,6 +103,7 @@ export const useCulturalTraining = () => {
     }
 
     try {
+      console.log('Marking lesson complete:', lessonId, 'for user:', user.id);
       const { error } = await supabase
         .from('user_lesson_progress')
         .insert([

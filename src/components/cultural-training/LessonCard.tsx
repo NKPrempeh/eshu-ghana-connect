@@ -29,6 +29,26 @@ export const LessonCard = ({
     }
   };
 
+  // Safely extract preview content from structured content
+  const getPreviewContent = () => {
+    if (!lesson.content || !Array.isArray(lesson.content)) return [];
+    
+    return lesson.content
+      .filter((item: any) => item.type === 'text' || item.type === 'list')
+      .slice(0, 3)
+      .map((item: any, index: number) => {
+        if (item.type === 'text') {
+          return item.content;
+        } else if (item.type === 'list' && Array.isArray(item.content)) {
+          return item.content[0]; // Take first list item
+        }
+        return '';
+      })
+      .filter(Boolean);
+  };
+
+  const previewItems = getPreviewContent();
+
   return (
     <Card className={`hover:shadow-lg transition-all duration-300 hover:-translate-y-1 ${isCompleted ? 'border-green-200 bg-green-50' : ''}`}>
       <CardHeader>
@@ -58,17 +78,19 @@ export const LessonCard = ({
         <CardDescription className="mb-4">
           {lesson.description}
         </CardDescription>
-        <div className="space-y-2 mb-4">
-          <h4 className="font-medium text-sm">What you'll learn:</h4>
-          <ul className="text-sm text-gray-600 space-y-1">
-            {lesson.content.slice(0, 3).map((item, index) => (
-              <li key={index} className="flex items-start gap-2">
-                <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0"></span>
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
+        {previewItems.length > 0 && (
+          <div className="space-y-2 mb-4">
+            <h4 className="font-medium text-sm">What you'll learn:</h4>
+            <ul className="text-sm text-gray-600 space-y-1">
+              {previewItems.map((item, index) => (
+                <li key={index} className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 flex-shrink-0"></span>
+                  <span>{typeof item === 'string' ? item.substring(0, 60) + (item.length > 60 ? '...' : '') : ''}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         <div className="space-y-2">
           <Button 
             onClick={onStartLesson}

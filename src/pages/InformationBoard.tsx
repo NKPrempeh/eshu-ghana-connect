@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import { InfoCard } from "@/components/information/InfoCard";
@@ -51,14 +52,36 @@ const InformationBoard = () => {
       color: "bg-blue-500",
       items: [
         {
+          id: 1,
           title: "Finding Rental Properties",
           description: "Tips for finding safe and affordable housing in major cities like Accra, Kumasi, and Cape Coast.",
-          content: "Popular rental websites include Meqasa.com and PropertyFinder. Average rental costs range from $200-800/month depending on location and amenities."
+          category: "housing",
+          urgency: "medium",
+          details: [
+            "Popular rental websites include Meqasa.com and PropertyFinder",
+            "Average rental costs range from $200-800/month depending on location and amenities",
+            "Consider proximity to work, schools, and transportation"
+          ],
+          contact: {
+            website: "https://meqasa.com",
+            phone: "+233 302 123 456"
+          }
         },
         {
+          id: 2,
           title: "Utilities Setup",
           description: "How to set up electricity, water, internet, and other essential services.",
-          content: "Contact ECG for electricity, Ghana Water Company for water services. Internet providers include MTN, Vodafone, and AirtelTigo."
+          category: "housing",
+          urgency: "high",
+          details: [
+            "Contact ECG for electricity connections",
+            "Ghana Water Company handles water services",
+            "Internet providers include MTN, Vodafone, and AirtelTigo"
+          ],
+          contact: {
+            phone: "+233 302 611 611",
+            email: "customercare@ecggh.com"
+          }
         }
       ]
     },
@@ -68,14 +91,31 @@ const InformationBoard = () => {
       color: "bg-green-500",
       items: [
         {
+          id: 3,
           title: "Public Transportation Options",
           description: "Overview of transportation options including tro tros, taxis, and ride-sharing services.",
-          content: "Tro tros are the most common and affordable option. Taxis are readily available but negotiate the fare beforehand. Ride-sharing apps like Uber and Bolt also operate in major cities."
+          category: "transport",
+          urgency: "low",
+          details: [
+            "Tro tros are the most common and affordable option",
+            "Taxis are readily available but negotiate the fare beforehand",
+            "Ride-sharing apps like Uber and Bolt operate in major cities"
+          ]
         },
         {
+          id: 4,
           title: "Driving in Ghana",
           description: "Information on obtaining a driver's license, road conditions, and traffic regulations.",
-          content: "An international driver's license is accepted for a limited time. Roads can be challenging, especially during the rainy season. Traffic is heavy in urban areas."
+          category: "transport",
+          urgency: "medium",
+          details: [
+            "International driver's license accepted for limited time",
+            "Roads can be challenging, especially during rainy season",
+            "Traffic is heavy in urban areas during peak hours"
+          ],
+          contact: {
+            address: "Driver and Vehicle Licensing Authority, Accra"
+          }
         }
       ]
     },
@@ -85,14 +125,32 @@ const InformationBoard = () => {
       color: "bg-red-500",
       items: [
         {
+          id: 5,
           title: "Finding Healthcare Services",
           description: "How to locate hospitals, clinics, and pharmacies.",
-          content: "Major hospitals include Korle Bu Teaching Hospital and 37 Military Hospital in Accra. Pharmacies are widely available in urban areas."
+          category: "healthcare",
+          urgency: "high",
+          details: [
+            "Major hospitals include Korle Bu Teaching Hospital and 37 Military Hospital",
+            "Pharmacies are widely available in urban areas",
+            "Emergency services available 24/7 at major hospitals"
+          ],
+          contact: {
+            phone: "193 (Emergency)",
+            address: "Korle Bu Teaching Hospital, Accra"
+          }
         },
         {
+          id: 6,
           title: "Health Insurance",
           description: "Information on health insurance options for expatriates and visitors.",
-          content: "Consider obtaining international health insurance or enrolling in the National Health Insurance Scheme (NHIS)."
+          category: "healthcare",
+          urgency: "medium",
+          details: [
+            "Consider international health insurance for comprehensive coverage",
+            "National Health Insurance Scheme (NHIS) available for residents",
+            "Private insurance options available through local providers"
+          ]
         }
       ]
     },
@@ -102,14 +160,32 @@ const InformationBoard = () => {
       color: "bg-purple-500",
       items: [
         {
+          id: 7,
           title: "Opening a Bank Account",
           description: "Requirements for opening a bank account as a foreigner.",
-          content: "You'll typically need a passport, proof of address, and a residence permit. Major banks include GCB Bank, Ecobank, and Standard Chartered Bank."
+          category: "business",
+          urgency: "medium",
+          details: [
+            "Required documents: passport, proof of address, residence permit",
+            "Major banks include GCB Bank, Ecobank, and Standard Chartered",
+            "Minimum deposit requirements vary by bank"
+          ]
         },
         {
+          id: 8,
           title: "Job Opportunities",
           description: "Where to find job listings and networking opportunities.",
-          content: "Popular job websites include Jobberman and Tonaton. Networking events are common in Accra and other major cities."
+          category: "business",
+          urgency: "low",
+          details: [
+            "Popular job websites include Jobberman and Tonaton",
+            "Networking events common in Accra and major cities",
+            "LinkedIn networking active in Ghana's business community"
+          ],
+          links: [
+            { label: "Jobberman Ghana", url: "https://jobberman.com.gh" },
+            { label: "Tonaton Jobs", url: "https://tonaton.com/jobs" }
+          ]
         }
       ]
     }
@@ -176,9 +252,7 @@ const InformationBoard = () => {
                   {category.items.map((item, itemIndex) => (
                     <InfoCard
                       key={itemIndex}
-                      title={item.title}
-                      description={item.description}
-                      content={item.content}
+                      item={item}
                     />
                   ))}
                 </div>

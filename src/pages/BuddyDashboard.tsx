@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
@@ -67,16 +66,7 @@ const BuddyDashboard = () => {
       // Get connections where current user is the buddy
       const { data: connectionsData, error } = await supabase
         .from('buddy_connections')
-        .select(`
-          id,
-          user_id,
-          created_at,
-          profiles!buddy_connections_user_id_fkey (
-            id,
-            full_name,
-            avatar_url
-          )
-        `)
+        .select('id, user_id, created_at')
         .eq('buddy_id', buddyProfile.id)
         .eq('status', 'accepted');
 
@@ -90,9 +80,23 @@ const BuddyDashboard = () => {
         return;
       }
 
-      // For each connection, get the latest message
-      const connectionsWithMessages = await Promise.all(
-        (connectionsData || []).map(async (conn) => {
+      if (!connectionsData || connectionsData.length === 0) {
+        setConnections([]);
+        setLoading(false);
+        return;
+      }
+
+      // For each connection, get user profile data and latest message
+      const connectionsWithDetails = await Promise.all(
+        connectionsData.map(async (conn) => {
+          // Get user profile
+          const { data: userProfile } = await supabase
+            .from('profiles')
+            .select('full_name, avatar_url')
+            .eq('id', conn.user_id)
+            .single();
+
+          // Get latest message
           const { data: lastMessage } = await supabase
             .from('messages')
             .select('content, sent_at')
@@ -104,9 +108,9 @@ const BuddyDashboard = () => {
           return {
             id: conn.id,
             user_id: conn.user_id,
-            name: conn.profiles?.full_name || 'Unknown User',
+            name: userProfile?.full_name || 'Unknown User',
             location: 'Ghana', // Default location
-            avatar_url: conn.profiles?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
+            avatar_url: userProfile?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
             lastMessage: lastMessage?.content || 'No messages yet',
             lastMessageTime: lastMessage ? formatTime(lastMessage.sent_at) : 'Never',
             status: 'online' as const
@@ -114,7 +118,7 @@ const BuddyDashboard = () => {
         })
       );
 
-      setConnections(connectionsWithMessages);
+      setConnections(connectionsWithDetails);
     } catch (error) {
       console.error('Error fetching connections:', error);
       toast({

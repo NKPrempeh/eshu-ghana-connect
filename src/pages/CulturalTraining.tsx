@@ -9,6 +9,8 @@ import { ProgressCard } from "@/components/cultural-training/ProgressCard";
 import { LessonViewer } from "@/components/cultural-training/LessonViewer";
 import { useCulturalTraining } from "@/hooks/useCulturalTraining";
 import { Lesson } from "@/types/cultural-training";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const CulturalTraining = () => {
   const { lessons, userProgress, loading, markLessonComplete } = useCulturalTraining();
@@ -97,6 +99,16 @@ const CulturalTraining = () => {
                 Sign in to save your lesson progress and continue your cultural journey!
               </CardDescription>
             </CardHeader>
+            <CardContent>
+              <div className="flex gap-4">
+                <Link to="/signup">
+                  <Button className="ghana-gradient">Sign Up</Button>
+                </Link>
+                <Link to="/buddy-signup">
+                  <Button variant="outline">Become a Cultural Buddy</Button>
+                </Link>
+              </div>
+            </CardContent>
           </Card>
         )}
       </div>

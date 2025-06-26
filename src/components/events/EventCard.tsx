@@ -1,10 +1,10 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, MapPin, Users, Clock, Image } from "lucide-react";
 import { EventMap } from "./EventMap";
+import { EventReservation } from "./EventReservation";
 
 interface Event {
   id: number;
@@ -27,6 +27,7 @@ interface EventCardProps {
 export const EventCard = ({ event }: EventCardProps) => {
   const [showMap, setShowMap] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
+  const [showReservation, setShowReservation] = useState(false);
 
   const getCategoryColor = (category?: string) => {
     if (!category) return 'bg-gray-100 text-gray-800';
@@ -98,8 +99,11 @@ export const EventCard = ({ event }: EventCardProps) => {
             </div>
             
             <div className="flex gap-2 pt-2">
-              <Button className="flex-1 ghana-gradient">
-                Join Event
+              <Button 
+                className="flex-1 ghana-gradient"
+                onClick={() => setShowReservation(true)}
+              >
+                Reserve Spot
               </Button>
               <Button 
                 variant="outline"
@@ -117,6 +121,13 @@ export const EventCard = ({ event }: EventCardProps) => {
           location={event.location}
           title={event.title}
           onClose={() => setShowMap(false)}
+        />
+      )}
+
+      {showReservation && (
+        <EventReservation
+          event={event}
+          onClose={() => setShowReservation(false)}
         />
       )}
 

@@ -65,7 +65,7 @@ const Index = () => {
             // Logged in user view
             <>
               <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                Welcome back, <span className="text-green-700">{getUserDisplayName()}</span>
+                Welcome <span className="text-green-700 italic">{getUserDisplayName()}</span>
               </h1>
               <p className="text-lg md:text-xl text-gray-600 mb-6 max-w-2xl mx-auto">
                 Continue your cultural journey in Ghana. Explore new experiences and stay connected with your community.

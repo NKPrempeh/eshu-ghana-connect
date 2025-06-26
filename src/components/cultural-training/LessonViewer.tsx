@@ -62,18 +62,20 @@ export const LessonViewer = ({ lesson, onComplete, onClose }: LessonViewerProps)
         <div className="flex-1 flex flex-col min-h-0">
           {!isCompleted ? (
             <>
-              <ScrollArea className="flex-1 min-h-0">
-                <div className="px-8 py-6 space-y-6 min-h-full">
-                  <div className="prose max-w-none">
-                    <h3 className="text-xl font-semibold mb-4">
-                      {currentContent.title}
-                    </h3>
-                    <div className="space-y-4">
-                      {currentContent.content}
+              <div className="flex-1 overflow-hidden">
+                <ScrollArea className="h-full">
+                  <div className="px-8 py-6 space-y-6">
+                    <div className="prose max-w-none">
+                      <h3 className="text-xl font-semibold mb-4">
+                        {currentContent.title}
+                      </h3>
+                      <div className="space-y-4">
+                        {currentContent.content}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </ScrollArea>
+                </ScrollArea>
+              </div>
               
               <div className="flex-shrink-0 px-8 py-6 border-t bg-gray-50">
                 <div className="flex justify-between items-center">

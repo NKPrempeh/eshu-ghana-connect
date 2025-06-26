@@ -29,6 +29,8 @@ export const useRealtimeChat = (buddyUserId: string) => {
     if (!user) return;
 
     try {
+      console.log('Fetching messages between:', user.id, 'and', buddyUserId);
+      
       const { data, error } = await supabase
         .from('messages')
         .select('*')
@@ -112,13 +114,20 @@ export const useRealtimeChat = (buddyUserId: string) => {
   };
 
   const sendMessage = async (content: string) => {
-    if (!user || !content.trim()) return false;
+    if (!user || !content.trim()) {
+      console.log('Cannot send message: missing user or content');
+      return false;
+    }
 
     setLoading(true);
     try {
-      console.log('Sending message:', { content, sender_id: user.id, recipient_id: buddyUserId });
+      console.log('Sending message:', { 
+        content: content.trim(), 
+        sender_id: user.id, 
+        recipient_id: buddyUserId 
+      });
       
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('messages')
         .insert([
           {
@@ -126,19 +135,21 @@ export const useRealtimeChat = (buddyUserId: string) => {
             sender_id: user.id,
             recipient_id: buddyUserId
           }
-        ]);
+        ])
+        .select()
+        .single();
 
       if (error) {
         console.error('Error sending message:', error);
         toast({
           title: "Error",
-          description: "Failed to send message. Please try again.",
+          description: `Failed to send message: ${error.message}`,
           variant: "destructive",
         });
         return false;
       }
 
-      console.log('Message sent successfully');
+      console.log('Message sent successfully:', data);
       return true;
     } catch (error) {
       console.error('Error sending message:', error);

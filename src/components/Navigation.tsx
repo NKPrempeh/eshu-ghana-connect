@@ -1,21 +1,54 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Home, BookOpen, Users, Info, Menu, LogIn, Calendar, LogOut, User } from "lucide-react";
+import { Home, BookOpen, Users, Info, Menu, LogIn, Calendar, LogOut, User, MessageSquare, BarChart3, Settings, MapPin, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Navigation = () => {
   const location = useLocation();
   const { user, signOut, loading } = useAuth();
+  const [isBuddy, setIsBuddy] = useState(false);
 
-  const navItems = [
+  useEffect(() => {
+    const checkIfBuddy = async () => {
+      if (user) {
+        const { data } = await supabase
+          .from('buddy_profiles')
+          .select('id')
+          .eq('user_id', user.id)
+          .single();
+        
+        setIsBuddy(!!data);
+      }
+    };
+
+    checkIfBuddy();
+  }, [user]);
+
+  const regularNavItems = [
     { to: "/", label: "Home", icon: Home },
     { to: "/cultural-training", label: "Cultural Training", icon: BookOpen },
     { to: "/buddy-system", label: "Buddy System", icon: Users },
     { to: "/events-places", label: "Events & Places", icon: Calendar },
     { to: "/information-board", label: "Information Board", icon: Info },
   ];
+
+  const buddyNavItems = [
+    { to: "/", label: "Home", icon: Home },
+    { to: "/buddy-resources", label: "Resources", icon: BookOpen },
+    { to: "/buddy-dashboard", label: "🏠 Dashboard", icon: Home },
+    { to: "/buddy-requests", label: "📍 Requests", icon: MapPin },
+    { to: "/buddy-availability", label: "📅 Availability", icon: Clock },
+    { to: "/buddy-messages", label: "📨 Messages", icon: MessageSquare },
+    { to: "/buddy-feedback", label: "📊 Feedback", icon: BarChart3 },
+    { to: "/buddy-profile", label: "👤 Profile", icon: User },
+    { to: "/buddy-settings", label: "⚙️ Settings", icon: Settings },
+  ];
+
+  const navItems = isBuddy ? buddyNavItems : regularNavItems;
 
   const NavLink = ({ to, label, icon: Icon, mobile = false }: any) => (
     <Link
@@ -40,7 +73,9 @@ const Navigation = () => {
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 ghana-gradient rounded-full"></div>
-              <span className="text-xl font-bold text-primary">Eshu</span>
+              <span className="text-xl font-bold text-primary">
+                {isBuddy ? "Eshu Buddy" : "Eshu"}
+              </span>
             </Link>
             <div>Loading...</div>
           </div>
@@ -55,7 +90,9 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 ghana-gradient rounded-full"></div>
-            <span className="text-xl font-bold text-primary">Eshu</span>
+            <span className="text-xl font-bold text-primary">
+              {isBuddy ? "Eshu Buddy" : "Eshu"}
+            </span>
           </Link>
 
           {/* Desktop Navigation */}

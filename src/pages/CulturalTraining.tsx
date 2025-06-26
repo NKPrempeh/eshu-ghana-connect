@@ -1,8 +1,7 @@
-
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Users, Languages, Utensils, Music, MapPin, Quiz, Trophy, ArrowRight } from "lucide-react";
+import { BookOpen, Users, Languages, Utensils, Music, MapPin, HelpCircle, Trophy, ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { LessonCard } from "@/components/cultural-training/LessonCard";
 import { ProgressCard } from "@/components/cultural-training/ProgressCard";
@@ -72,7 +71,7 @@ const CulturalTraining = () => {
             <CardHeader>
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Quiz className="text-blue-600" size={24} />
+                  <HelpCircle className="text-blue-600" size={24} />
                 </div>
                 <div>
                   <CardTitle className="text-lg">Cultural Knowledge Quiz</CardTitle>

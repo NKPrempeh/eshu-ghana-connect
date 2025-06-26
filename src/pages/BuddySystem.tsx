@@ -137,7 +137,10 @@ const BuddySystem = () => {
                           className="w-16 h-16 rounded-full object-cover"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
-                            e.currentTarget.nextElementSibling!.style.display = 'flex';
+                            const nextElement = e.currentTarget.nextElementSibling as HTMLElement;
+                            if (nextElement) {
+                              nextElement.style.display = 'flex';
+                            }
                           }}
                         />
                       ) : null}

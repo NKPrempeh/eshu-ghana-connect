@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { X, ChevronRight, ChevronLeft, CheckCircle, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
+import { X, ChevronRight, ChevronLeft, CheckCircle, Sparkles } from "lucide-react";
 import { Lesson } from "@/types/cultural-training";
 import { getLessonContent } from "./LessonContent";
 
@@ -39,20 +39,6 @@ export const LessonViewer = ({ lesson, onComplete, onClose }: LessonViewerProps)
     onClose();
   };
 
-  const scrollToTop = () => {
-    const viewport = document.querySelector('[data-radix-scroll-area-viewport]');
-    if (viewport) {
-      viewport.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  const scrollToBottom = () => {
-    const viewport = document.querySelector('[data-radix-scroll-area-viewport]');
-    if (viewport) {
-      viewport.scrollTo({ top: viewport.scrollHeight, behavior: 'smooth' });
-    }
-  };
-
   const currentContent = getLessonContent(lesson.id, currentStep);
 
   return (
@@ -73,12 +59,12 @@ export const LessonViewer = ({ lesson, onComplete, onClose }: LessonViewerProps)
           <Progress value={progress} className="w-full mt-4" />
         </CardHeader>
         
-        <div className="flex-1 flex flex-col min-h-0 relative">
+        <div className="flex-1 flex flex-col min-h-0">
           {!isCompleted ? (
             <>
-              <div className="flex-1 overflow-hidden relative">
-                <ScrollArea className="h-full">
-                  <div className="px-8 py-6 space-y-6">
+              <div className="flex-1 overflow-hidden">
+                <div className="h-full max-h-[400px] overflow-y-auto px-8 py-6">
+                  <div className="space-y-6">
                     <div className="prose max-w-none">
                       <h3 className="text-xl font-semibold mb-4">
                         {currentContent.title}
@@ -88,28 +74,6 @@ export const LessonViewer = ({ lesson, onComplete, onClose }: LessonViewerProps)
                       </div>
                     </div>
                   </div>
-                </ScrollArea>
-                
-                {/* Scroll control buttons */}
-                <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex flex-col gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={scrollToTop}
-                    className="bg-white/90 hover:bg-white shadow-lg"
-                    title="Scroll to top"
-                  >
-                    <ChevronUp size={16} />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={scrollToBottom}
-                    className="bg-white/90 hover:bg-white shadow-lg"
-                    title="Scroll to bottom"
-                  >
-                    <ChevronDown size={16} />
-                  </Button>
                 </div>
               </div>
               

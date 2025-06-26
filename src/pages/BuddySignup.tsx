@@ -133,7 +133,7 @@ const BuddySignup = () => {
             avatar_url: avatarUrl,
             specialties: formData.specialties,
             languages: formData.languages,
-            user_id: user?.id || null, // Set user_id if user is logged in
+            user_id: user?.id || null,
           }
         ]);
 
@@ -141,10 +141,11 @@ const BuddySignup = () => {
 
       toast({
         title: "Application Submitted!",
-        description: "Thank you for your interest in becoming a cultural buddy. We'll review your application and get back to you soon.",
+        description: "Welcome to the buddy system! You can now connect with users.",
       });
 
-      navigate("/");
+      // Redirect to buddy dashboard instead of home
+      navigate("/buddy-dashboard");
     } catch (error: any) {
       console.error('Error submitting buddy application:', error);
       toast({

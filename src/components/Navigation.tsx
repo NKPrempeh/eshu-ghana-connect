@@ -1,21 +1,37 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Home, BookOpen, Users, Info, Menu, LogIn, Calendar, LogOut, User } from "lucide-react";
+import { Home, BookOpen, Users, Info, Menu, LogIn, Calendar, LogOut, User, MessageSquare, Settings, BarChart3, MapPin, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
+import { useBuddyRole } from "@/hooks/useBuddyRole";
 
 const Navigation = () => {
   const location = useLocation();
   const { user, signOut, loading } = useAuth();
+  const { isBuddy, loading: buddyLoading } = useBuddyRole();
 
-  const navItems = [
+  const userNavItems = [
     { to: "/", label: "Home", icon: Home },
     { to: "/cultural-training", label: "Cultural Training", icon: BookOpen },
     { to: "/buddy-system", label: "Buddy System", icon: Users },
     { to: "/events-places", label: "Events & Places", icon: Calendar },
     { to: "/information-board", label: "Information Board", icon: Info },
   ];
+
+  const buddyNavItems = [
+    { to: "/", label: "Home", icon: Home },
+    { to: "/buddy-resources", label: "Resources", icon: BookOpen },
+    { to: "/buddy-dashboard", label: "🏠 Dashboard", icon: Home },
+    { to: "/buddy-requests", label: "📍 Requests", icon: MapPin },
+    { to: "/buddy-availability", label: "📅 Availability", icon: Clock },
+    { to: "/buddy-messages", label: "📨 Messages", icon: MessageSquare },
+    { to: "/buddy-feedback", label: "📊 Feedback", icon: BarChart3 },
+    { to: "/buddy-profile", label: "👤 Profile", icon: User },
+    { to: "/buddy-settings", label: "⚙️ Settings", icon: Settings },
+  ];
+
+  const navItems = isBuddy ? buddyNavItems : userNavItems;
 
   const NavLink = ({ to, label, icon: Icon, mobile = false }: any) => (
     <Link
@@ -33,14 +49,14 @@ const Navigation = () => {
     await signOut();
   };
 
-  if (loading) {
+  if (loading || buddyLoading) {
     return (
       <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 ghana-gradient rounded-full"></div>
-              <span className="text-xl font-bold text-primary">Eshu</span>
+              <span className="text-xl font-bold text-primary">{isBuddy ? "Eshu Buddy" : "Eshu"}</span>
             </Link>
             <div>Loading...</div>
           </div>
@@ -55,7 +71,7 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 ghana-gradient rounded-full"></div>
-            <span className="text-xl font-bold text-primary">Eshu</span>
+            <span className="text-xl font-bold text-primary">{isBuddy ? "Eshu Buddy" : "Eshu"}</span>
           </Link>
 
           {/* Desktop Navigation */}

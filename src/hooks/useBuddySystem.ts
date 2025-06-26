@@ -25,7 +25,6 @@ export const useBuddySystem = () => {
 
     console.log('Setting up real-time subscriptions for buddy connections');
 
-    // Listen for connection changes
     const connectionsChannel = supabase
       .channel('buddy_connections_changes')
       .on(
@@ -50,10 +49,12 @@ export const useBuddySystem = () => {
 
   const fetchBuddies = async () => {
     try {
+      console.log('Fetching buddy profiles...');
       const { data, error } = await supabase
         .from('buddy_profiles')
         .select('*')
-        .eq('is_available', true);
+        .eq('is_available', true)
+        .order('created_at', { ascending: false });
 
       if (error) {
         console.error('Error fetching buddies:', error);
@@ -63,6 +64,7 @@ export const useBuddySystem = () => {
           variant: "destructive",
         });
       } else {
+        console.log('Fetched buddies:', data);
         setBuddies(data || []);
       }
     } catch (error) {
@@ -75,6 +77,7 @@ export const useBuddySystem = () => {
     if (!user) return;
 
     try {
+      console.log('Fetching user connections...');
       const { data, error } = await supabase
         .from('buddy_connections')
         .select('*')
@@ -83,6 +86,7 @@ export const useBuddySystem = () => {
       if (error) {
         console.error('Error fetching connections:', error);
       } else {
+        console.log('Fetched connections:', data);
         setConnections(data || []);
       }
     } catch (error) {
@@ -100,7 +104,6 @@ export const useBuddySystem = () => {
       return;
     }
 
-    // Check if already connected or has pending request
     const existingConnection = connections.find(c => c.buddy_id === buddy.id);
     if (existingConnection) {
       toast({
@@ -111,6 +114,7 @@ export const useBuddySystem = () => {
     }
 
     try {
+      console.log('Creating connection request...');
       const { error } = await supabase
         .from('buddy_connections')
         .insert([

@@ -327,22 +327,14 @@ const BuddyDashboard = () => {
       <Navigation />
       
       <div className="container mx-auto px-4 py-8">
-        {/* Header with Home Link */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="text-center flex-1">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Buddy Dashboard
-            </h1>
-            <p className="text-xl text-gray-600">
-              Help newcomers navigate Ghanaian culture with confidence
-            </p>
-          </div>
-          <Link to="/">
-            <Button variant="outline" className="flex items-center gap-2">
-              <Home size={20} />
-              Back to Eshu Home
-            </Button>
-          </Link>
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Buddy Dashboard
+          </h1>
+          <p className="text-xl text-gray-600">
+            Help newcomers navigate Ghanaian culture with confidence
+          </p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">

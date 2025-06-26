@@ -23,11 +23,11 @@ const Navigation = () => {
   // Buddy-specific navigation items (Eshu Buddy navigation)
   const buddyNavItems = [
     { to: "/", label: "Home", icon: Home },
-    { to: "/buddy-dashboard", label: "Dashboard", icon: Home },
+    { to: "/buddy-dashboard", label: "Dashboard", icon: BarChart3 },
     { to: "/buddy-requests", label: "Requests", icon: MapPin },
     { to: "/buddy-availability", label: "Availability", icon: Clock },
-    { to: "/buddy-messages", label: "Messages", icon: MessageSquare },
-    { to: "/buddy-profile", label: "Profile", icon: User },
+    { to: "/buddy-dashboard", label: "Messages", icon: MessageSquare },
+    { to: "/profile", label: "Profile", icon: User },
   ];
 
   // Use buddy navigation only if user is a buddy, otherwise use regular navigation

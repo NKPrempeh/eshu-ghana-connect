@@ -65,15 +65,11 @@ const Index = () => {
             // Logged in user view
             <>
               <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                Welcome back, <span className="ghana-gradient bg-clip-text text-transparent">{getUserDisplayName()}</span>
+                Welcome back, <span className="text-green-700">{getUserDisplayName()}</span>
               </h1>
               <p className="text-lg md:text-xl text-gray-600 mb-6 max-w-2xl mx-auto">
                 Continue your cultural journey in Ghana. Explore new experiences and stay connected with your community.
               </p>
-              <div className="flex items-center justify-center gap-2 mb-8">
-                <User size={20} className="text-green-600" />
-                <span className="text-green-700 font-medium">Ready to explore more of Ghana</span>
-              </div>
             </>
           ) : (
             // Not logged in view

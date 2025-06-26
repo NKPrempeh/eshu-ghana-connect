@@ -1,131 +1,159 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { UserPlus, Users, Clock, MapPin } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { X, Upload, ImagePlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 const BuddySignup = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
+    email: "",
     location: "",
     bio: "",
-    specialties: "",
-    languages: "",
-    response_time: "Usually responds within 1 hour",
+    specialties: [] as string[],
+    languages: [] as string[],
     avatar_url: ""
   });
-  const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
-  const { toast } = useToast();
-  const navigate = useNavigate();
+  const [currentSpecialty, setCurrentSpecialty] = useState("");
+  const [currentLanguage, setCurrentLanguage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const addSpecialty = () => {
+    if (currentSpecialty.trim() && !formData.specialties.includes(currentSpecialty.trim())) {
+      setFormData({
+        ...formData,
+        specialties: [...formData.specialties, currentSpecialty.trim()]
+      });
+      setCurrentSpecialty("");
+    }
+  };
+
+  const removeSpecialty = (specialty: string) => {
+    setFormData({
+      ...formData,
+      specialties: formData.specialties.filter(s => s !== specialty)
+    });
+  };
+
+  const addLanguage = () => {
+    if (currentLanguage.trim() && !formData.languages.includes(currentLanguage.trim())) {
+      setFormData({
+        ...formData,
+        languages: [...formData.languages, currentLanguage.trim()]
+      });
+      setCurrentLanguage("");
+    }
+  };
+
+  const removeLanguage = (language: string) => {
+    setFormData({
+      ...formData,
+      languages: formData.languages.filter(l => l !== language)
+    });
+  };
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setAvatarFile(file);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setAvatarPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const uploadAvatar = async () => {
+    if (!avatarFile) return null;
+
+    const fileExt = avatarFile.name.split('.').pop();
+    const fileName = `${Math.random()}.${fileExt}`;
+    const filePath = `avatars/${fileName}`;
+
+    // Create bucket if it doesn't exist
+    try {
+      const { data: buckets } = await supabase.storage.listBuckets();
+      const avatarBucket = buckets?.find(bucket => bucket.name === 'avatars');
+      
+      if (!avatarBucket) {
+        await supabase.storage.createBucket('avatars', { public: true });
+      }
+    } catch (error) {
+      console.log('Bucket creation handled');
+    }
+
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, avatarFile);
+
+    if (uploadError) {
+      throw uploadError;
+    }
+
+    const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+    return data.publicUrl;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) {
-      toast({
-        title: "Please log in",
-        description: "You need to be logged in to become a buddy.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setLoading(true);
+    setIsSubmitting(true);
 
     try {
-      const specialtiesArray = formData.specialties.split(',').map(s => s.trim()).filter(s => s);
-      const languagesArray = formData.languages.split(',').map(s => s.trim()).filter(s => s);
+      let avatarUrl = formData.avatar_url;
+      
+      if (avatarFile) {
+        avatarUrl = await uploadAvatar() || "";
+      }
 
       const { error } = await supabase
         .from('buddy_profiles')
         .insert([
           {
-            user_id: user.id,
-            name: formData.name,
-            location: formData.location,
-            bio: formData.bio,
-            specialties: specialtiesArray,
-            languages: languagesArray,
-            response_time: formData.response_time,
-            avatar_url: formData.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.name}`,
-            is_available: true
+            ...formData,
+            avatar_url: avatarUrl,
+            specialties: formData.specialties,
+            languages: formData.languages,
           }
         ]);
 
-      if (error) {
-        console.error('Error creating buddy profile:', error);
-        toast({
-          title: "Error",
-          description: "Failed to submit your buddy application. Please try again.",
-          variant: "destructive",
-        });
-      } else {
-        // Send email to the applicant
-        try {
-          const emailResponse = await supabase.functions.invoke('send-buddy-signup-email', {
-            body: {
-              applicantName: formData.name,
-              applicantEmail: user.email,
-              location: formData.location,
-              bio: formData.bio,
-              specialties: specialtiesArray,
-              languages: languagesArray
-            }
-          });
-          
-          if (emailResponse.error) {
-            console.error('Error sending email:', emailResponse.error);
-          }
-        } catch (emailError) {
-          console.error('Error sending signup email:', emailError);
-          // Don't fail the whole process if email fails
-        }
+      if (error) throw error;
 
-        toast({
-          title: "Welcome as a Buddy!",
-          description: "Your buddy profile is now live and available to help newcomers!",
-        });
-        navigate("/buddy-dashboard");
-      }
-    } catch (error) {
-      console.error('Error creating buddy profile:', error);
+      toast({
+        title: "Application Submitted!",
+        description: "Thank you for your interest in becoming a cultural buddy. We'll review your application and get back to you soon.",
+      });
+
+      navigate("/");
+    } catch (error: any) {
+      console.error('Error submitting buddy application:', error);
       toast({
         title: "Error",
-        description: "Failed to submit your application. Please try again.",
+        description: error.message || "Failed to submit application. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
-    setLoading(false);
   };
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
-        <Navigation />
-        <div className="container mx-auto px-4 py-20">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold mb-4">Please Log In</h1>
-            <p className="text-gray-600 mb-8">You need to be logged in to apply as a buddy.</p>
-            <Button onClick={() => navigate("/login")} className="ghana-gradient">
-              Go to Login
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
@@ -133,130 +161,149 @@ const BuddySignup = () => {
       
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
-          <Card className="shadow-lg border-l-4 border-l-primary">
+          <Card>
             <CardHeader className="text-center">
-              <div className="w-16 h-16 ghana-gradient rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="text-white" size={32} />
-              </div>
               <CardTitle className="text-3xl">Become a Cultural Buddy</CardTitle>
-              <CardDescription className="text-lg">
-                Help newcomers integrate into Ghanaian culture by sharing your knowledge and experience
+              <CardDescription>
+                Help newcomers navigate Ghanaian culture and make their transition smoother
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <h3 className="font-semibold text-blue-800 mb-2">What is a Cultural Buddy?</h3>
-                <p className="text-sm text-blue-700">
-                  Cultural buddies are experienced locals or long-term residents who help newcomers navigate Ghanaian culture, 
-                  traditions, and daily life. You'll provide guidance, answer questions, and offer support through real-time chat.
-                </p>
-              </div>
-
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Avatar Upload */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium">Profile Photo</label>
+                  <div className="flex items-center space-x-4">
+                    <div className="w-20 h-20 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
+                      {avatarPreview ? (
+                        <img src={avatarPreview} alt="Preview" className="w-full h-full object-cover" />
+                      ) : (
+                        <ImagePlus className="w-8 h-8 text-gray-400" />
+                      )}
+                    </div>
+                    <div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAvatarChange}
+                        className="hidden"
+                        id="avatar-upload"
+                      />
+                      <label
+                        htmlFor="avatar-upload"
+                        className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                      >
+                        <Upload className="w-4 h-4 mr-2" />
+                        Upload Photo
+                      </label>
+                      <p className="text-xs text-gray-500 mt-1">JPG, PNG up to 5MB</p>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Full Name *</Label>
-                    <Input 
-                      id="name" 
-                      type="text" 
-                      placeholder="Enter your full name"
+                    <label htmlFor="name" className="block text-sm font-medium">Full Name *</label>
+                    <Input
+                      id="name"
+                      name="name"
                       value={formData.name}
-                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      onChange={handleInputChange}
                       required
+                      placeholder="Your full name"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="location">
-                      <MapPin className="inline mr-1" size={16} />
-                      Location *
-                    </Label>
-                    <Input 
-                      id="location" 
-                      type="text" 
-                      placeholder="e.g., Accra, Kumasi, Cape Coast"
-                      value={formData.location}
-                      onChange={(e) => handleInputChange('location', e.target.value)}
+                    <label htmlFor="email" className="block text-sm font-medium">Email *</label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
                       required
+                      placeholder="your.email@example.com"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="bio">Tell us about yourself *</Label>
-                  <Textarea 
-                    id="bio" 
-                    placeholder="Share your background, experience in Ghana, and why you want to help newcomers..."
+                  <label htmlFor="location" className="block text-sm font-medium">Location in Ghana *</label>
+                  <Input
+                    id="location"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="e.g., Accra, Kumasi, Cape Coast"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="bio" className="block text-sm font-medium">About You *</label>
+                  <Textarea
+                    id="bio"
+                    name="bio"
                     value={formData.bio}
-                    onChange={(e) => handleInputChange('bio', e.target.value)}
+                    onChange={handleInputChange}
                     required
                     rows={4}
+                    placeholder="Tell us about yourself, your experience in Ghana, and why you want to be a cultural buddy..."
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="specialties">Areas of Expertise *</Label>
-                  <Input 
-                    id="specialties" 
-                    type="text" 
-                    placeholder="e.g., Business, Education, Healthcare, Local customs (separate with commas)"
-                    value={formData.specialties}
-                    onChange={(e) => handleInputChange('specialties', e.target.value)}
-                    required
-                  />
-                  <p className="text-sm text-gray-600">Separate multiple specialties with commas</p>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="languages">Languages Spoken *</Label>
-                    <Input 
-                      id="languages" 
-                      type="text" 
-                      placeholder="e.g., English, Twi, Ga, French"
-                      value={formData.languages}
-                      onChange={(e) => handleInputChange('languages', e.target.value)}
-                      required
+                  <label className="block text-sm font-medium">Your Specialties</label>
+                  <div className="flex gap-2 mb-2">
+                    <Input
+                      value={currentSpecialty}
+                      onChange={(e) => setCurrentSpecialty(e.target.value)}
+                      placeholder="e.g., Food Culture, Business Networking"
+                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSpecialty())}
                     />
+                    <Button type="button" onClick={addSpecialty} variant="outline">
+                      Add
+                    </Button>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="response_time">
-                      <Clock className="inline mr-1" size={16} />
-                      Expected Response Time
-                    </Label>
-                    <Select value={formData.response_time} onValueChange={(value) => handleInputChange('response_time', value)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Usually responds within 30 minutes">Within 30 minutes</SelectItem>
-                        <SelectItem value="Usually responds within 1 hour">Within 1 hour</SelectItem>
-                        <SelectItem value="Usually responds within 2 hours">Within 2 hours</SelectItem>
-                        <SelectItem value="Usually responds within 4 hours">Within 4 hours</SelectItem>
-                        <SelectItem value="Usually responds within 1 day">Within 1 day</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div className="flex flex-wrap gap-2">
+                    {formData.specialties.map((specialty) => (
+                      <Badge key={specialty} variant="secondary" className="flex items-center gap-1">
+                        {specialty}
+                        <X size={12} className="cursor-pointer" onClick={() => removeSpecialty(specialty)} />
+                      </Badge>
+                    ))}
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="avatar_url">Profile Picture URL (Optional)</Label>
-                  <Input 
-                    id="avatar_url" 
-                    type="url" 
-                    placeholder="https://example.com/your-photo.jpg"
-                    value={formData.avatar_url}
-                    onChange={(e) => handleInputChange('avatar_url', e.target.value)}
-                  />
-                  <p className="text-sm text-gray-600">Leave blank to use an auto-generated avatar</p>
+                  <label className="block text-sm font-medium">Languages You Speak</label>
+                  <div className="flex gap-2 mb-2">
+                    <Input
+                      value={currentLanguage}
+                      onChange={(e) => setCurrentLanguage(e.target.value)}
+                      placeholder="e.g., English, Twi, French"
+                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addLanguage())}
+                    />
+                    <Button type="button" onClick={addLanguage} variant="outline">
+                      Add
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {formData.languages.map((language) => (
+                      <Badge key={language} variant="secondary" className="flex items-center gap-1">
+                        {language}
+                        <X size={12} className="cursor-pointer" onClick={() => removeLanguage(language)} />
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
 
                 <Button 
                   type="submit" 
-                  className="w-full ghana-gradient hover:opacity-90 transition-opacity"
-                  disabled={loading}
+                  className="w-full ghana-gradient" 
+                  disabled={isSubmitting}
                 >
-                  {loading ? "Creating Profile..." : "Become a Buddy"}
-                  <UserPlus className="ml-2" size={16} />
+                  {isSubmitting ? "Submitting..." : "Submit Application"}
                 </Button>
               </form>
             </CardContent>

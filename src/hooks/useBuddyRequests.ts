@@ -112,7 +112,7 @@ export const useBuddyRequests = () => {
             user_avatar: userProfile?.avatar_url || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face',
             user_location: 'Ghana', // Default location
             message: conn.message || 'Hi! I\'d like to connect with you for cultural guidance.',
-            status: conn.status,
+            status: conn.status as 'pending' | 'accepted' | 'declined',
             requested_at: conn.requested_at,
             created_at: conn.created_at
           };

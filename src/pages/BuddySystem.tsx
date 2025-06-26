@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
@@ -6,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { MessageCircle, Users, Send } from "lucide-react";
+import { MessageCircle, Users, Send, Clock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBuddySystem } from "@/hooks/useBuddySystem";
 import { BuddyProfile } from "@/types/buddy-system";

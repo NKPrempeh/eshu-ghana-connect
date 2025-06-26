@@ -33,7 +33,7 @@ const Index = () => {
                 Get Started <ArrowRight className="ml-2" size={20} />
               </Button>
             </Link>
-            <Link to="/events">
+            <Link to="/events-places">
               <Button size="lg" variant="outline" className="border-2">
                 Explore Events
               </Button>
@@ -92,7 +92,7 @@ const Index = () => {
                 <CardDescription>
                   Discover cultural festivals, events, and must-visit places throughout Ghana.
                 </CardDescription>
-                <Link to="/events">
+                <Link to="/events-places">
                   <Button className="mt-4 w-full">Explore</Button>
                 </Link>
               </CardContent>
@@ -109,7 +109,7 @@ const Index = () => {
                 <CardDescription>
                   Access practical information about living, working, and studying in Ghana.
                 </CardDescription>
-                <Link to="/information">
+                <Link to="/information-board">
                   <Button className="mt-4 w-full">Get Info</Button>
                 </Link>
               </CardContent>

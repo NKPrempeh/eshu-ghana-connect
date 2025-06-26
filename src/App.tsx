@@ -33,9 +33,11 @@ const App = () => (
             <Route path="/buddy-signup" element={<BuddySignup />} />
             <Route path="/buddy-dashboard" element={<BuddyDashboard />} />
             <Route path="/information-board" element={<InformationBoard />} />
+            <Route path="/information" element={<InformationBoard />} />
+            <Route path="/events" element={<EventsAndPlaces />} />
+            <Route path="/events-places" element={<EventsAndPlaces />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/events-places" element={<EventsAndPlaces />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

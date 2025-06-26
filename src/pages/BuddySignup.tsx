@@ -56,7 +56,7 @@ const BuddySignup = () => {
             languages: languagesArray,
             response_time: formData.response_time,
             avatar_url: formData.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.name}`,
-            is_available: true // Make profiles available immediately
+            is_available: true
           }
         ]);
 
@@ -93,7 +93,7 @@ const BuddySignup = () => {
           title: "Welcome as a Buddy!",
           description: "Your buddy profile is now live and available to help newcomers!",
         });
-        navigate("/buddy-system");
+        navigate("/buddy-dashboard");
       }
     } catch (error) {
       console.error('Error creating buddy profile:', error);

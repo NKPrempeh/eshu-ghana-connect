@@ -51,6 +51,7 @@ export const useRealtimeChat = (buddyUserId: string) => {
           sent_at: msg.sent_at
         }));
         setMessages(convertedMessages);
+        console.log('Fetched messages:', convertedMessages);
       }
     } catch (error) {
       console.error('Error fetching messages:', error);
@@ -63,6 +64,8 @@ export const useRealtimeChat = (buddyUserId: string) => {
     // Create a unique channel name for this conversation
     const channelName = `chat_${[user.id, buddyUserId].sort().join('_')}`;
     
+    console.log('Setting up realtime subscription for channel:', channelName);
+    
     channelRef.current = supabase
       .channel(channelName)
       .on(
@@ -70,32 +73,40 @@ export const useRealtimeChat = (buddyUserId: string) => {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'messages',
-          filter: `or(and(sender_id.eq.${user.id},recipient_id.eq.${buddyUserId}),and(sender_id.eq.${buddyUserId},recipient_id.eq.${user.id}))`
+          table: 'messages'
         },
         (payload) => {
           console.log('New message received:', payload);
           const dbMessage = payload.new as any;
-          const newMessage: Message = {
-            id: dbMessage.id.toString(),
-            content: dbMessage.content,
-            sender_id: dbMessage.sender_id,
-            recipient_id: dbMessage.recipient_id,
-            sent_at: dbMessage.sent_at
-          };
           
-          // Only add message if it's not already in the list (prevent duplicates)
-          setMessages(prev => {
-            const exists = prev.some(msg => msg.id === newMessage.id);
-            if (exists) return prev;
-            return [...prev, newMessage];
-          });
+          // Only process messages that are part of this conversation
+          if ((dbMessage.sender_id === user.id && dbMessage.recipient_id === buddyUserId) ||
+              (dbMessage.sender_id === buddyUserId && dbMessage.recipient_id === user.id)) {
+            
+            const newMessage: Message = {
+              id: dbMessage.id.toString(),
+              content: dbMessage.content,
+              sender_id: dbMessage.sender_id,
+              recipient_id: dbMessage.recipient_id,
+              sent_at: dbMessage.sent_at
+            };
+            
+            // Only add message if it's not already in the list (prevent duplicates)
+            setMessages(prev => {
+              const exists = prev.some(msg => msg.id === newMessage.id);
+              if (exists) return prev;
+              console.log('Adding new message to state:', newMessage);
+              return [...prev, newMessage];
+            });
+          }
         }
       )
       .subscribe((status) => {
         console.log('Realtime subscription status:', status);
         if (status === 'SUBSCRIBED') {
           console.log('Successfully subscribed to chat updates');
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error('Error subscribing to chat updates');
         }
       });
   };
@@ -105,6 +116,8 @@ export const useRealtimeChat = (buddyUserId: string) => {
 
     setLoading(true);
     try {
+      console.log('Sending message:', { content, sender_id: user.id, recipient_id: buddyUserId });
+      
       const { error } = await supabase
         .from('messages')
         .insert([
@@ -125,6 +138,7 @@ export const useRealtimeChat = (buddyUserId: string) => {
         return false;
       }
 
+      console.log('Message sent successfully');
       return true;
     } catch (error) {
       console.error('Error sending message:', error);

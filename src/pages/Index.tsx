@@ -8,9 +8,45 @@ import { GallerySection } from "@/components/home/GallerySection";
 import { EmailVerificationSuccess } from "@/components/auth/EmailVerificationSuccess";
 import { EshuLogo } from "@/components/EshuLogo";
 import { useAuth } from "@/contexts/AuthContext";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const { user } = useAuth();
+  const [userProfile, setUserProfile] = useState<any>(null);
+
+  useEffect(() => {
+    if (user) {
+      fetchUserProfile();
+    }
+  }, [user]);
+
+  const fetchUserProfile = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching user profile:', error);
+      } else {
+        setUserProfile(data);
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
+
+  const getUserDisplayName = () => {
+    if (userProfile?.full_name) {
+      return userProfile.full_name;
+    }
+    return user?.email || 'User';
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-green-50">
@@ -28,14 +64,14 @@ const Index = () => {
             // Logged in user view
             <>
               <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                Welcome back to <span className="ghana-gradient bg-clip-text text-transparent">Eshu</span>
+                Welcome back, <span className="ghana-gradient bg-clip-text text-transparent">{getUserDisplayName()}</span>
               </h1>
               <p className="text-lg md:text-xl text-gray-600 mb-6 max-w-2xl mx-auto">
                 Continue your cultural journey in Ghana. Explore new experiences and stay connected with your community.
               </p>
               <div className="flex items-center justify-center gap-2 mb-8">
                 <User size={20} className="text-green-600" />
-                <span className="text-green-700 font-medium">Logged in as {user.email}</span>
+                <span className="text-green-700 font-medium">Ready to explore more of Ghana</span>
               </div>
             </>
           ) : (
